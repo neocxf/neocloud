@@ -1,0 +1,14 @@
+eureka:
+  client:
+    service-url:
+      default-zone: http://${eureka.instance.hostname}:8761/eureka/
+    register-with-eureka: false
+    fetch-registry: true
+  instance:
+    hostname: localhost
+zuul:
+  prefix: /api
+  routes:
+    inventory:
+      path: /neo-inventory/**
+      serviceId: neo-inventory
