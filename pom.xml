@@ -16,6 +16,9 @@
         <module>shoppingcart-ui</module>
         <module>eureka-registry</module>
         <module>gateway</module>
+        <module>util-service</module>
+        <module>proto-api</module>
+        <module>config</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -49,6 +52,11 @@
             <artifactId>guava</artifactId>
             <version>23.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -64,6 +72,7 @@
     </dependencyManagement>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

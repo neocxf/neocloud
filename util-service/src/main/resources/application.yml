@@ -1,5 +1,5 @@
-server:
-  port: 9002
+grpc:
+  port: 6565
 eureka:
   client:
     register-with-eureka: true
@@ -8,9 +8,9 @@ eureka:
   instance:
     prefer-ip-address: true
     hostname: localhost
+    non-secure-port: ${grpc.port}
 spring:
   application:
-    name: neo-cart
-  cloud:
-    config:
-      uri: http://config:8888
+    name: neo-util
+server:
+  port: 9003
