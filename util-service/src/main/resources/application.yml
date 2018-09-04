@@ -19,3 +19,8 @@ spring:
     password: guest
 server:
   port: 9003
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
