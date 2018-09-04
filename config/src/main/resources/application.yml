@@ -7,7 +7,7 @@ spring:
         native:
           search-locations: classpath:/config, classpath:/app1, classpath:/app2
         overrides:
-          forbidden: '{cipher}AgA8jhh3DRLf/oCO/RxBPXBDwv6ypyE+p1FdjWRLqZGinPwVDGYCJVDrdQd52ZavCM9VND89xMCq7DN+1jNh9T515WTKr27n8enMlnGO6pzZiEHZZA1afBjr2lOIP6sialRQMB+GuDsJ/lK2xVRkxNYTipcjdars3nd/7a5dp/DcVyj/HtoqgGcVMl6jgX9VbM+9y0KL5ROb+5yxxL7Yyhg5je4Tyr+v/XzZcvRsAGPTJpp6tR0HzsamnPL6zV6TfIb1IZXrdKFF0FtFsyTDZAzZaeUNHTi+wY8a/7ZSNL9mGPMAyDYKJCcPadFq9YPskLLvyIgVdGQmaf7qgV7TlxDbMUHJGpJo6edrbFcZLIJXEplo231WXPY946MOVVb8FyjsH+oxiWzYE9Vn/0w8+ogupP2QX0EWjMjZjtqzev6NF7C0bWY7PEOjLBFrFOCYsjSams7Jb9ihqCOJBd4cua/1i2eACb8LZ3zRCoQsXNRmyYdc3NVXp5CeZb1uPjNkHks5P5VSMqZQJgMAA5dW6X9aLdafzOkfsIlIyL50k8Ff7SRzWjFGodb3MMQgebg0HdaEUpPkpfq8lZmHgg2zDQQrBMKiPllDigK+91+sfF+6ueco4LcN967bGYzsUzKitdZ8/UzkJa8UUJHWfKnP/vXODyOeani+mFJBiCjI/jUNlDt5jdtnbp+ddcw+AJPyZFet9pzdhOQvsb4Qa1GN1Sxo3XlUkQy4su5Ta1m1IwJpdQ=='
+          forbidden: '{cipher}AgCCMIfp+6obXLjRbkVs7UQPSgpAcHrk+g0oPMqvMomxRujg9tolhpeNXRrc7xH0eK2pE2Axm8eJGeb5xXnwfXSnsvew8lajtzPlak+kA+RW2HUKytzY3TeEqod5EkF9e5OXn5lWKCKJoyhVOr2r2H4+DheSqsg+ZzOtILYolp4JlXqK/A5aZgLOMFA1qqtqVhzWB6GmG18nqOsKBPhU6md0kyg+FD2+CEAOoZ3dyiO9AmYtal7BW8znHWTlRUUKkcggSIySEMGZuiOxwEPpYFQtYR1sE76SxUMSKEzfGiuw8lCG+M1fcS9ilXPHUj+VAxlsIwrtEVM5iJ09yAIxNo/GPQAff4HDPsB56MSbTYVcEl43zqfn6uLFPqutIMIVU2+YEDPtwZ6aUEYj2sVLy1fp9IsSVbvC903Lbtk7ZsDxfjHjwV5RPLw+LcTcJ5m7TCvyBFhKOlzMxIvRftPmeHwW9v5IA7lj4DjQCh/nfpCCVXxwv6IWlq1PD+tTDgEw4gWdr1KZmmf/iBh6LnV2xTBoI4//gdxMowSOTj+WSsZmAkKt/cnqYCx8Uar5ZZr01C5myfQTn8sbeWhtC62XLUjk8bHW3sP9yfZK2Z9fmP/2FMpIf4DDFvLWo/rQUOYLrCJ6FMa+fy/s2ldOpLVTLF7JdoqKpe74Wo7HNGgiw60PLoNH3IhKynk/iMLwrxbNfUeT9K226kZRHqu2hXzQRqGdMadQHPancL6sJNrZeoD+wg=='
         vault:
           kv-version: 2
         git:
