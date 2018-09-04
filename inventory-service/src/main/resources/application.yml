@@ -11,3 +11,8 @@ eureka:
 spring:
   application:
     name: neo-inventory
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

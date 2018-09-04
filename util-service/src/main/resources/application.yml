@@ -12,5 +12,10 @@ eureka:
 spring:
   application:
     name: neo-util
+  rabbitmq:
+    host: ${MQ_ADDR:localhost}
+    port: 5672
+    username: guest
+    password: guest
 server:
   port: 9003

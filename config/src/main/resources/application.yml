@@ -7,7 +7,7 @@ spring:
         native:
           search-locations: classpath:/config, classpath:/app1, classpath:/app2
         overrides:
-          a: aaaaa
+          a: '{cipher}c74029be4b0a962a015a222a85d65bb18c161551b0e6d1df25adcc3bc82351eb'
         vault:
           kv-version: 2
         git:

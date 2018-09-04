@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.discovery.EurekaClient;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,21 @@ public class CartController {
         this.eurekaClient = eurekaClient;
     }
 
+
+    List<Map<String, String>> inventoryList() {
+        List<Map<String, String>> inventories = Lists.newArrayList();
+
+        Map<String, String> map = Maps.newHashMap();
+        map.put("id", UUID.randomUUID().toString());
+        map.put("cart", "cart_unknown");
+        map.put("inventoryName", "product_unknown");
+
+        inventories.add(map);
+
+        return inventories;
+    }
+
+    @HystrixCommand(fallbackMethod = "inventoryList")
     @GetMapping
     public List<Map<String, String>> getInventories() {
         System.out.println("request coming");

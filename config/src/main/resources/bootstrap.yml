@@ -1,0 +1,10 @@
+encrypt:
+  key: abcd
+spring:
+  cloud:
+    config:
+      server:
+        encrypt:
+          enabled: false
+  application:
+    name: config
