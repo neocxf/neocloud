@@ -1,5 +1,10 @@
 encrypt:
-  key: abcd
+#  key: abcd
+  key-store:
+    alias: config-server-key
+    location: config-server.jks
+    password: mys70r3s3cr3t
+    secret: myk34s3cr3t
 spring:
   cloud:
     config:

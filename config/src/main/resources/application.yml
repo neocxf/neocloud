@@ -6,14 +6,15 @@ spring:
       server:
         native:
           search-locations: classpath:/config, classpath:/app1, classpath:/app2
-        overrides:
-          a: '{cipher}c74029be4b0a962a015a222a85d65bb18c161551b0e6d1df25adcc3bc82351eb'
+#        overrides:
+#          a: '{cipher}c74029be4b0a962a015a222a85d65bb18c161551b0e6d1df25adcc3bc82351eb'
+#          a: '{cipher}c74029be4b0a962a015a222a85d65bb18c161551b0e6d1df25adcc3bc82351eb'
         vault:
           kv-version: 2
         git:
-          uri: https://github.com/springdeveloper123/spring-cloud-config-server-db
+          uri: https://github.com/neocxf/neocloud
           search-paths:
-            - app*
+            - properties/app*
           force-pull: true
   application:
     name: config
