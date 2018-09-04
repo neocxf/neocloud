@@ -6,9 +6,8 @@ spring:
       server:
         native:
           search-locations: classpath:/config, classpath:/app1, classpath:/app2
-#        overrides:
-#          a: '{cipher}c74029be4b0a962a015a222a85d65bb18c161551b0e6d1df25adcc3bc82351eb'
-#          a: '{cipher}c74029be4b0a962a015a222a85d65bb18c161551b0e6d1df25adcc3bc82351eb'
+        overrides:
+          forbidden: '{cipher}AgAhq1PHi/ToteT9AiOsRham5uk5AVIpnzJBW178xv3j3U/0ONqC45nrXWOt1BHyyqXmvvRTZNEATyXXGxds4brMmQ29olrSOyXDeuhqR2M+FLD3C6xmbPBSBiENKv6soj7t7wKMMEE+vYRrfYt3Qn602ERdfqyR3i8CwOL7rHT61OCCfeZLMQxlg+588JlndIeZ7MNJEwW+YUT785wb12xt9c48LfnF/V6VXTU94fD5RUjhR6lw47+ZXWaufTYmgpuaJ0DifK2rHDfdYVkY5HX8bj1mSo+o/ZWaP3z6cYTNsVpgAXY3wkFHdBCtL6EwpcWWcZxb/bNh9s8eTzzgg/k1SRzkji45NiAsuq5uPxrw5BuUJodzGTS+IBxExaWaZTlzKtIYOw6PmUi4gol4/BPPsGsMTu0vVa9duMbR56E9w2MWcC2eikYhA7P1Vck97pxaYcuym2UwPLOJXIjcAPgDi7P65gpe1mO03CxQAcwBopfiUVGNvAeIME69v7+tzX4ru37eyLWqnZflSzFa/yhidyqf+q4IM62JcJd6ECgw45nlYlBiIWTjMm0Xh9owgkP+MIaNNKUC4q04j++3LSOUkqJ6mIFUuCqqyQ8i/OxnPw3nA206QAsuzRnmXvnAU2fff1w5m69NjhGsiCN8Ij9o9gPKc67ROka9PnvSVS6LuS/VImahHIvEWJZe99ztnA89zf5moPX7J0eC6cI5Va6j'
         vault:
           kv-version: 2
         git:

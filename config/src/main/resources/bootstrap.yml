@@ -1,5 +1,4 @@
 encrypt:
-#  key: abcd
   key-store:
     alias: config-server-key
     location: config-server.jks
@@ -10,6 +9,6 @@ spring:
     config:
       server:
         encrypt:
-          enabled: false
+          enabled: true
   application:
     name: config

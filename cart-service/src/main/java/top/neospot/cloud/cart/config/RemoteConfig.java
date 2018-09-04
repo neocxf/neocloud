@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @RefreshScope
 @Data
 public class RemoteConfig {
-    @Value("${a: __a}")
+    @Value("${forbidden: __a}")
     private String a;
 
 
