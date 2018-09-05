@@ -1,10 +1,10 @@
 eureka:
   client:
+    register-with-eureka: true
     service-url:
-      default-zone: http://${eureka.instance.hostname}:8761/eureka/
-    register-with-eureka: false
-    fetch-registry: true
+      defaultZone: http://${eureka.instance.hostname}:8761/eureka/
   instance:
+    prefer-ip-address: false
     hostname: localhost
 zuul:
   prefix: /api
@@ -12,3 +12,11 @@ zuul:
     inventory:
       path: /neo-inventory/**
       serviceId: neo-inventory
+    cart:
+      path: /neo-cart/**
+      serviceId: neo-cart
+server:
+  port: 8080
+spring:
+  application:
+    name: gateway

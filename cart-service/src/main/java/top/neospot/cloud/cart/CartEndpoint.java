@@ -2,7 +2,6 @@ package top.neospot.cloud.cart;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
@@ -11,6 +10,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import top.neospot.cloud.cart.domain.entity.Cart;
 import top.neospot.cloud.cart.repository.CartMapper;
+import top.neospot.cloud.common.BaseCloud;
 
 /**
  * By neo.chen{neocxf@gmail.com} on 2018/8/24.
@@ -20,7 +20,7 @@ import top.neospot.cloud.cart.repository.CartMapper;
 @EnableFeignClients
 @EnableCircuitBreaker
 @Slf4j
-public class CartEndpoint implements CommandLineRunner {
+public class CartEndpoint extends BaseCloud {
 
     public static void main(String[] args) {
         SpringApplication.run(CartEndpoint.class, args);
@@ -37,6 +37,8 @@ public class CartEndpoint implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        super.run(args);
+
         System.out.println(this.cartMapper.findById(1L));
         this.cartMapper.save(Cart.builder().lines("3,2,1").userId(1L).build());
 

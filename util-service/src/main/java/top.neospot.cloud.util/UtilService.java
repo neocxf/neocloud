@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
+import top.neospot.cloud.common.BaseCloud;
 import top.neospot.cloud.util.service.GreeterService;
 
 /**
@@ -11,7 +12,7 @@ import top.neospot.cloud.util.service.GreeterService;
  */
 @SpringBootApplication
 @EnableEurekaClient
-public class UtilService {
+public class UtilService extends BaseCloud {
 
     public static void main(String[] args) {
         SpringApplication.run(UtilService.class, args);

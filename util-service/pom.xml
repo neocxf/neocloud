@@ -58,8 +58,14 @@
         </dependency>
 
         <dependency>
-            <artifactId>proto-api</artifactId>
+            <artifactId>commons</artifactId>
             <groupId>top.neospot.cloud</groupId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>top.neospot.cloud</groupId>
+            <artifactId>commons</artifactId>
             <version>${project.version}</version>
         </dependency>
 
