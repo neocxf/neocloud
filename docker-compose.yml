@@ -20,11 +20,6 @@ services:
       - 8888:8888
     environment:
       - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
-#    healthcheck:
-#      test: curl -f http://localhost:8888/actuator/health
-#      interval: 30s
-#      timeout: 10s
-#      retries: 5
   eureka:
     build: eureka-registry
     container_name: eureka
@@ -92,3 +87,15 @@ services:
       - 9004:9004
     environment:
       - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
+  order:
+    build: order-service
+    container_name: order
+    mem_limit: 370m
+    ports:
+    - 9006:9006
+    environment:
+    - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
+  mongo:
+    build: mongodb
+    ports:
+      - 27017:27017
