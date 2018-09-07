@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 @Slf4j
-@RestController("/carts")
+@RestController
 public class CartController {
     final InventoryClient inventoryClient;
 

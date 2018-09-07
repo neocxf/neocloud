@@ -9,3 +9,5 @@
 ## config details
 
 1. docker ram size according to the [equation](https://github.com/dsyer/spring-boot-memory-blog/blob/master/cf.md)
+
+2. spring-cloud docker-compose structure refer from [resource](https://github.com/sqshq/PiggyMetrics)

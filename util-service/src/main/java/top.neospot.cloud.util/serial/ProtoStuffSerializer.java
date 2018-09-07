@@ -47,4 +47,11 @@ public class ProtoStuffSerializer implements ISerializer {
         T t = objenesis1.newInstance(clazz);
         return t;
     }
+
+    public <T> T deserialize2(byte[] bytes, Class<T> clazz) {
+        Schema<T> schema = RuntimeSchema.getSchema(clazz);
+        T result = schema.newMessage();
+        ProtostuffIOUtil.mergeFrom(bytes, result, schema);
+        return clazz.cast(result);
+    }
 }

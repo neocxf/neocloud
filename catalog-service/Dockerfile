@@ -7,4 +7,6 @@ ADD ./target/catalog-service.jar /app.jar
 
 ENTRYPOINT exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar
 
+HEALTHCHECK --interval=30s --timeout=30s CMD curl -f http://localhost:9005/actuator/health || exit 1
+
 EXPOSE 9005

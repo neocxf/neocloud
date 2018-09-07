@@ -1,0 +1,94 @@
+version: '2.1'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    restart: always
+    ports:
+      - 15672:15672
+      - 5672:5672
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"
+    healthcheck:
+      test: 'exit 0'
+  config:
+    build: config
+    container_name: config
+    mem_limit: 370m
+    ports:
+      - 8888:8888
+    environment:
+      - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
+#    healthcheck:
+#      test: curl -f http://localhost:8888/actuator/health
+#      interval: 30s
+#      timeout: 10s
+#      retries: 5
+  eureka:
+    build: eureka-registry
+    container_name: eureka
+    mem_limit: 320m
+    ports:
+      - 8761:8761
+    environment:
+      - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
+    depends_on:
+      - config
+  util:
+    build: util-service
+    container_name: util
+    mem_limit: 370m
+    ports:
+      - 9003:9003
+    environment:
+      - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
+      - SPRING_RABBITMQ_HOST=${NEOCLOUD_HOST}
+  inventory:
+    build: inventory-service
+    container_name: inventory
+    mem_limit: 320m
+    ports:
+      - 9001:9001
+    environment:
+      - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
+  gateway:
+    build: gateway
+    container_name: gateway
+    mem_limit: 320m
+    ports:
+      - 8080:8080
+    environment:
+      - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
+  cart:
+    build: cart-service
+    container_name: cart
+    mem_limit: 370m
+    ports:
+      - 9002:9002
+    environment:
+      - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
+      - SPRING_RABBITMQ_HOST=${NEOCLOUD_HOST}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      inventory:
+        condition: service_started
+      util:
+        condition: service_started
+  catalog:
+    build: catalog-service
+    container_name: catalog
+    mem_limit: 370m
+    ports:
+      - 9005:9005
+    environment:
+      - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
+  customer:
+    build: customer-service
+    container_name: customer
+    mem_limit: 370m
+    ports:
+      - 9004:9004
+    environment:
+      - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}

@@ -29,17 +29,16 @@ public class InventoryEndpoint {
     public static class InventoryController {
 
         @GetMapping
-        public List<Map<String,String>> getInventories() {
-            List<Map<String,String>> inventories = Lists.newArrayList();
+        public List<Map<String, String>> getInventories() {
+            List<Map<String, String>> inventories = Lists.newArrayList();
 
             for (int i = 0; i < 5; i++) {
                 Map<String, String> map = Maps.newHashMap();
                 map.put("id", UUID.randomUUID().toString());
-                map.put("productName", "product"+i);
+                map.put("productName", "product" + i);
 
                 inventories.add(map);
             }
-
 
             return inventories;
         }
