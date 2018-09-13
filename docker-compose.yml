@@ -68,9 +68,9 @@ services:
       rabbitmq:
         condition: service_healthy
       inventory:
-        condition: service_started
+        condition: service_healthy
       util:
-        condition: service_started
+        condition: service_healthy
   catalog:
     build: catalog-service
     container_name: catalog
@@ -99,3 +99,17 @@ services:
     build: mongodb
     ports:
       - 27017:27017
+    environment:
+    - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+  auth:
+    build: auth-service
+    container_name: auth
+    mem_limit: 370m
+    ports:
+    - 9007:9007
+    environment:
+    - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
+    - MONGODB_HOST=${NEOCLOUD_HOST}
+    - MONGODB_PASSWORD=${MONGODB_PASSWORD}
+    depends_on:
+      - mongo

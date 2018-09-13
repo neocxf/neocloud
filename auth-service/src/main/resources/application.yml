@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: neo-auth
+  cloud:
+    config:
+      uri: http://config:8888
+  rabbitmq:
+    host: ${MQ_ADDR:localhost}
+    port: 5672
+    username: guest
+    password: guest
+  data:
+    mongodb:
+      database: neocloud
+      host: ${MONGODB_HOST:localhost}
+      username: neocloud
+      password: ${MONGODB_PASSWORD}
+      port: 27017
+eureka:
+  client:
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+server:
+  port: 9007

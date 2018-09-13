@@ -1,5 +1,13 @@
 # neo cloud
 
+## Quick start
+1. start the app docker way
+```bash
+    docker-compose -f docker-compose.yaml --build
+```
+2. 
+
+
 ## resources
 1. [Comparing API Gateway Performances: NGINX vs. ZUUL vs. Spring Cloud Gateway vs. Linkerd](https://engineering.opsgenie.com/comparing-api-gateway-performances-nginx-vs-zuul-vs-spring-cloud-gateway-vs-linkerd-b2cc59c65369)
 2. [Quick Guide to Microservices with Spring Boot 2.0, Eureka and Spring Cloud](https://piotrminkowski.wordpress.com/2018/04/26/quick-guide-to-microservices-with-spring-boot-2-0-eureka-and-spring-cloud/)

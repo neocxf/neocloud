@@ -8,6 +8,11 @@ import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import top.neospot.cloud.cart.domain.entity.Cart;
 import top.neospot.cloud.cart.repository.CartMapper;
 import top.neospot.cloud.common.BaseCloud;
@@ -19,6 +24,7 @@ import top.neospot.cloud.common.BaseCloud;
 @EnableEurekaClient
 @EnableFeignClients
 @EnableCircuitBreaker
+@EnableSwagger2
 @Slf4j
 public class CartEndpoint extends BaseCloud {
 
@@ -45,5 +51,12 @@ public class CartEndpoint extends BaseCloud {
         this.cartMapper.findAll().forEach(System.out::println);
     }
 
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("top.neospot.cloud"))
+                .build();
+    }
 
 }

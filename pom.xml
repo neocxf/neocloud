@@ -19,6 +19,7 @@
         <module>util-service</module>
         <module>config</module>
         <module>commons</module>
+        <module>auth-service</module>
     </modules>
 
     <packaging>pom</packaging>

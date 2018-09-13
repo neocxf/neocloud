@@ -15,8 +15,17 @@ zuul:
     cart:
       path: /neo-cart/**
       serviceId: neo-cart
+    auth:
+      path: /neo-auth/**
+      serviceId: neo-auth
+    order:
+      path: /neo-order/**
+      serviceId: neo-order
 server:
   port: 8080
 spring:
   application:
     name: gateway
+ribbon:
+  eager-load:
+    enabled: true
