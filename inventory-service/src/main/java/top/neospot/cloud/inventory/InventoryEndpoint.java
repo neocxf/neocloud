@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,31 +25,11 @@ import java.util.UUID;
 @SpringBootApplication
 @EnableEurekaClient
 @EnableSwagger2
+@EnableCircuitBreaker
 public class InventoryEndpoint {
 
     public static void main(String[] args) {
         SpringApplication.run(InventoryEndpoint.class, args);
     }
-
-    @RestController
-    @RequestMapping(("/inventory"))
-    public static class InventoryController {
-
-        @GetMapping
-        public List<Map<String, String>> getInventories() {
-            List<Map<String, String>> inventories = Lists.newArrayList();
-
-            for (int i = 0; i < 5; i++) {
-                Map<String, String> map = Maps.newHashMap();
-                map.put("id", UUID.randomUUID().toString());
-                map.put("productName", "product" + i);
-
-                inventories.add(map);
-            }
-
-            return inventories;
-        }
-    }
-
 
 }
