@@ -3,11 +3,13 @@ package top.neospot.cloud.catalog;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Callable;
 
-@Component
+//@Component
+@Primary
 @Slf4j
 public class ContextCopyHystrixConcurrencyStrategy extends HystrixConcurrencyStrategy {
 

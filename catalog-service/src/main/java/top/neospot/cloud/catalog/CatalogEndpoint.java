@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -18,6 +19,7 @@ import top.neospot.cloud.common.BaseCloud;
 @SpringBootApplication
 @EnableSwagger2
 @EnableCircuitBreaker
+@EnableFeignClients
 public class CatalogEndpoint extends BaseCloud {
     public static void main(String[] args) {
         SpringApplication.run(CatalogEndpoint.class, args);
