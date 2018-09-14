@@ -12,9 +12,10 @@ spring:
           kv-version: 2
         git:
           uri: https://github.com/neocxf/neocloud
-          search-paths:
-            - properties/app*
+#          search-paths:
+#            - properties/app*
           force-pull: true
+          clone-on-start: true
   application:
     name: config
 server:
@@ -27,3 +28,8 @@ eureka:
   instance:
     prefer-ip-address: true
     hostname: localhost
+management:
+  endpoints:
+    web:
+      exposure:
+        include: *
