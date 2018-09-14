@@ -12,8 +12,8 @@ spring:
           kv-version: 2
         git:
           uri: https://github.com/neocxf/neocloud
-#          search-paths:
-#            - properties/app*
+          search-paths:
+            - properties/*
           force-pull: true
           clone-on-start: true
   application:
@@ -32,4 +32,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: *
+        include: '*'
