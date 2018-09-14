@@ -13,7 +13,7 @@ spring:
         git:
           uri: https://github.com/neocxf/neocloud
           search-paths:
-            - properties/*
+            - properties
           force-pull: true
           clone-on-start: true
   application:
