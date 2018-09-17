@@ -15,7 +15,7 @@ services:
   config:
     build: config
     container_name: config
-    mem_limit: 370m
+    mem_limit: 370
     ports:
       - 8888:8888
     environment:
@@ -23,7 +23,7 @@ services:
   eureka:
     build: eureka-registry
     container_name: eureka
-    mem_limit: 320m
+    mem_limit: 320
     ports:
       - 8761:8761
     environment:
@@ -33,7 +33,7 @@ services:
   util:
     build: util-service
     container_name: util
-    mem_limit: 370m
+    mem_limit: 370
     ports:
       - 9003:9003
     environment:
@@ -42,7 +42,7 @@ services:
   inventory:
     build: inventory-service
     container_name: inventory
-    mem_limit: 320m
+    mem_limit: 320
     ports:
       - 9001:9001
     environment:
@@ -50,7 +50,7 @@ services:
   gateway:
     build: gateway
     container_name: gateway
-    mem_limit: 320m
+    mem_limit: 320
     ports:
       - 8080:8080
     environment:
@@ -58,7 +58,7 @@ services:
   cart:
     build: cart-service
     container_name: cart
-    mem_limit: 370m
+    mem_limit: 370
     ports:
       - 9002:9002
     environment:
@@ -74,7 +74,7 @@ services:
   catalog:
     build: catalog-service
     container_name: catalog
-    mem_limit: 370m
+    mem_limit: 370
     ports:
       - 9005:9005
     environment:
@@ -82,7 +82,7 @@ services:
   customer:
     build: customer-service
     container_name: customer
-    mem_limit: 370m
+    mem_limit: 370
     ports:
       - 9004:9004
     environment:
@@ -90,7 +90,7 @@ services:
   order:
     build: order-service
     container_name: order
-    mem_limit: 370m
+    mem_limit: 370
     ports:
     - 9006:9006
     environment:
@@ -104,7 +104,7 @@ services:
   auth:
     build: auth-service
     container_name: auth
-    mem_limit: 370m
+    mem_limit: 370
     ports:
     - 9007:9007
     environment:
