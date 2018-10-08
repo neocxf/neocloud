@@ -1,8 +1,3 @@
-// load is a nashorn function to load data
-load("https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.min.js");
-
-// load('https://unpkg.com/query-string@5.1.1/index.js');
-
 function generateTemplate(dataObject) {
     var source = "Hello {{user}}, \n \nYour Order Number is {{orderId}}. You have " +
         "{{items.length}} items :\n" +
@@ -10,8 +5,7 @@ function generateTemplate(dataObject) {
     var template = Handlebars.compile(source);
     var data = JSON.parse(dataObject);
     var result = template(data);
-    print(result);
+    console.log(result);
 
+    console.log(util.serialize(dataObject));
 }
-
-load('parser-plain.js');

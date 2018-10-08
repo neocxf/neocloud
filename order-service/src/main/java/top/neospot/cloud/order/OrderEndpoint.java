@@ -3,6 +3,7 @@ package top.neospot.cloud.order;
 import com.google.common.collect.Maps;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ import java.util.UUID;
  */
 @SpringBootApplication
 @EnableSwagger2
+@EnableCircuitBreaker
 public class OrderEndpoint extends BaseCloud {
     public static void main(String[] args) {
         SpringApplication.run(OrderEndpoint.class, args);
@@ -36,7 +38,7 @@ public class OrderEndpoint extends BaseCloud {
     @RestController
     public static class OrderController {
         @GetMapping("/orders")
-        public Map<String,String> getAllOrders() {
+        public Map<String, String> getAllOrders() {
             Map<String, String> map = Maps.newHashMap();
             String id = UUID.randomUUID().toString();
 
