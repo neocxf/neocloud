@@ -1,0 +1,16 @@
+
+server:
+  port: 9008
+
+spring:
+  datasource:
+    username: derby
+    password: derbysoft
+    url: jdbc:mysql://10.200.107.82:3306/linkcenter?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC&useSSL=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate.show_sql: true

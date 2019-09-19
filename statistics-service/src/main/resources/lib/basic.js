@@ -2,16 +2,25 @@
     if (typeof define === 'function' && define.amd) {
         // AMD
         // define(['jquery', 'underscore'], factory);
-        define(['handlebars'], factory);
+        console.log('..............loading amd ..............................');
+
+        define('util', [], function () {
+            return (root.util = factory())
+        });
+
     } else if (typeof exports === 'object') {
         // Node, CommonJS-like
         // module.exports = factory(require('jquery'), require('lodash'));
-        module.exports = factory(require('handlebars'));
+        console.log('-------------------loading commonjs-------------------------------');
+        module.exports = factory();
     } else {
         // Browser globals (root is window)
-        root.util = factory(Handlebars);
+
+        console.log('-------------------default loading-------------------------------');
+
+        root.util = factory();
     }
-}(this, function (Handlebars) {
+}(this, function () {
 
     var templates = {};
 
@@ -62,8 +71,33 @@
         return o;
     }
 
+    function isValid(source) {
+        return (source !== undefined && source !== null);
+    }
+
+    function cleanNull(obj) {
+        for (var p in obj) {
+            if (obj.hasOwnProperty(p) && (obj[p] === null || obj[p] === undefined)) {
+                delete obj[p]
+            }
+        }
+    }
+
+    function strip(str, prefix) {
+        if (str == null || str === undefined) {
+            return '';
+        }
+
+        var param = str.split(prefix)[1];
+
+        // return param && param.replace(/./, param[0].toLowerCase());
+        return param;
+    }
+
+
     function echo(data) {
         console.log('echo ...')
+        console.log(JSON.stringify(obj))
         console.log(data)
     }
 
@@ -71,7 +105,18 @@
     return {
         serialize: serialize,
         toJsonObject: toJsonObject,
-        render: render,
+        isValid: isValid,
+        cleanNull: cleanNull,
+        strip: strip,
         echo: echo
     }
 }));
+
+console.log('loading test.js ...')
+
+// var module = load("statistics-service/src/main/resources/lib/test.js");
+var module = load("test.js");
+console.log(JSON.stringify(module));
+
+var module2 = load("test.js");
+console.log(JSON.stringify(module2));

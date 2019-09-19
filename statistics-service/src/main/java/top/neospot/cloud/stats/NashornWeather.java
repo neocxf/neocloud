@@ -2,6 +2,7 @@ package top.neospot.cloud.stats;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -28,6 +29,8 @@ public class NashornWeather {
             ScriptEngine engine = manager.getEngineByName("nashorn");
             engine.put("response", response);
             System.out.println(engine.eval("JSON.stringify(JSON.parse(response))"));
+            HttpServletRequest request;
+
         }
     }
 }

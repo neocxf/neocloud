@@ -16,7 +16,7 @@ import java.util.Set;
 /**
  * By neo.chen{neocxf@gmail.com} on 2018/9/25.
  */
-public class NashornFactoryTest {
+public class LinkcenterFactoryTest {
 
     private OrderDetails order;
     Gson gson = new Gson();
@@ -45,7 +45,7 @@ public class NashornFactoryTest {
 
     @Test
     public void testLoadHandlebarsLibraries() throws Exception {
-        ScriptEngine scriptEngine = NashornFactory.globalScriptEngine;
+        ScriptEngine scriptEngine = LinkcenterFactory.globalScriptEngine;
 
         Invocable invocable = (Invocable) scriptEngine;
 
@@ -68,7 +68,7 @@ public class NashornFactoryTest {
     @Test
     public void invokeQueryStringFunction() throws Exception {
 
-        ScriptEngine scriptEngine = NashornFactory.globalScriptEngine;
+        ScriptEngine scriptEngine = LinkcenterFactory.globalScriptEngine;
 
 
         Invocable invocable = (Invocable) scriptEngine;

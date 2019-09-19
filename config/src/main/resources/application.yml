@@ -1,11 +1,11 @@
 spring:
   profiles:
-    active: git
+    active: native
   cloud:
     config:
       server:
         native:
-          search-locations: classpath:/config, classpath:/app1, classpath:/app2
+          search-locations: classpath:/config, classpath:/app1, classpath:/app2, classpath:/properties
         overrides:
           forbidden: '{cipher}AgCCMIfp+6obXLjRbkVs7UQPSgpAcHrk+g0oPMqvMomxRujg9tolhpeNXRrc7xH0eK2pE2Axm8eJGeb5xXnwfXSnsvew8lajtzPlak+kA+RW2HUKytzY3TeEqod5EkF9e5OXn5lWKCKJoyhVOr2r2H4+DheSqsg+ZzOtILYolp4JlXqK/A5aZgLOMFA1qqtqVhzWB6GmG18nqOsKBPhU6md0kyg+FD2+CEAOoZ3dyiO9AmYtal7BW8znHWTlRUUKkcggSIySEMGZuiOxwEPpYFQtYR1sE76SxUMSKEzfGiuw8lCG+M1fcS9ilXPHUj+VAxlsIwrtEVM5iJ09yAIxNo/GPQAff4HDPsB56MSbTYVcEl43zqfn6uLFPqutIMIVU2+YEDPtwZ6aUEYj2sVLy1fp9IsSVbvC903Lbtk7ZsDxfjHjwV5RPLw+LcTcJ5m7TCvyBFhKOlzMxIvRftPmeHwW9v5IA7lj4DjQCh/nfpCCVXxwv6IWlq1PD+tTDgEw4gWdr1KZmmf/iBh6LnV2xTBoI4//gdxMowSOTj+WSsZmAkKt/cnqYCx8Uar5ZZr01C5myfQTn8sbeWhtC62XLUjk8bHW3sP9yfZK2Z9fmP/2FMpIf4DDFvLWo/rQUOYLrCJ6FMa+fy/s2ldOpLVTLF7JdoqKpe74Wo7HNGgiw60PLoNH3IhKynk/iMLwrxbNfUeT9K226kZRHqu2hXzQRqGdMadQHPancL6sJNrZeoD+wg=='
         vault:

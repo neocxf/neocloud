@@ -11,16 +11,22 @@ zuul:
   routes:
     inventory:
       path: /neo-inventory/**
-      serviceId: neo-inventory
+      serviceId: inventory-service
     cart:
       path: /neo-cart/**
-      serviceId: neo-cart
+      serviceId: cart-service
     auth:
       path: /neo-auth/**
-      serviceId: neo-auth
+      serviceId: auth-service
     order:
       path: /neo-order/**
-      serviceId: neo-order
+      serviceId: order-service
+    catalog:
+      path: /neo-catalog/**
+      serviceId: catalog-service
+    reward:
+      path: /neo-reward/**
+      serviceId: reward-service
 server:
   port: 8080
 spring:
