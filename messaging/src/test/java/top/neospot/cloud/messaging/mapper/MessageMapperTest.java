@@ -21,7 +21,7 @@ public class MessageMapperTest extends MessagingAppTest {
     @Before
     public void init() throws Exception {
         Message message = new Message();
-        message.setMessageId(1L);
+        message.setMessageId("1");
         Map<String, String> stringMap = new HashMap<>();
         stringMap.put("type", "reward_shipping");
         stringMap.put("product_id", "1");
@@ -45,7 +45,7 @@ public class MessageMapperTest extends MessagingAppTest {
 
     @Test
     public void selectTest() {
-        Message message = messageMapper.selectOne(Wrappers.<Message>lambdaQuery().eq(Message::getMessageId, 1));
+        Message message = messageMapper.selectOne(Wrappers.<Message>lambdaQuery().eq(Message::getMessageId, "ee61e7b099534f71ab29846ccd8304f9"));
         System.out.println(message);
     }
 

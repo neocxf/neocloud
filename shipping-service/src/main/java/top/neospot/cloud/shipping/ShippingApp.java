@@ -10,7 +10,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 /**
  * By neo.chen{neocxf@gmail.com} on 2019/9/19.
  */
-@MapperScan("top.neospot.cloud.shippig.mapper")
+@MapperScan("top.neospot.cloud.shipping.mapper")
 @SpringCloudApplication
 @EnableEurekaClient
 @EnableFeignClients

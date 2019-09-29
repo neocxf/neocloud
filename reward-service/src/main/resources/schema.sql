@@ -7,7 +7,8 @@ create table if not exists reward (
     deleted bit(1) default 0,
     version int default 0,
     create_time datetime,
-    last_update_time datetime
+    last_update_time datetime,
+    unique key user_idx (user_id)
 );
 
 # 积分兑换记录表
@@ -16,6 +17,8 @@ create table if not exists reward_exchange (
     id int primary key auto_increment,
     user_id int not null ,
     product_id int not null ,
+    reward_id int not null,
+    order_id int not null,
     credit int not null,
     deleted bit(1) default 0,
     version int default 0,

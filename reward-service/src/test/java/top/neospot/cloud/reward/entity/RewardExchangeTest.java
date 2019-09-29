@@ -26,7 +26,7 @@ public class RewardExchangeTest extends RewardAppTest {
         RewardExchange user = rewardMapper.selectOne(queryWrapper);
 
         if (user == null) {
-            user = new RewardExchange().setUserId(1).setCredit(100).setProductId(1);
+            user = new RewardExchange().setUserId(1L).setCredit(100L).setProductId(1L);
             rewardMapper.insert(user);
         }
 
@@ -88,7 +88,7 @@ public class RewardExchangeTest extends RewardAppTest {
         // update a record to check the timestamp working
         QueryWrapper<RewardExchange> queryWrapper1 = new QueryWrapper<>();
         queryWrapper.lambda().eq(RewardExchange::getUserId, 1)   ;
-        RewardExchange user = new RewardExchange().setCredit(30).setUserId(1);
+        RewardExchange user = new RewardExchange().setCredit(30L).setUserId(1L);
 
         rewardMapper.update(user, queryWrapper1);
 

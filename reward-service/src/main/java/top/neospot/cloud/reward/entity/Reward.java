@@ -14,10 +14,11 @@ import top.neospot.cloud.common.model.BaseModel;
 @Data
 @Accessors(chain = true)
 public class Reward extends BaseModel {
-    private int credit;
-    private int userId;
+    private Long credit;
+    private Long userId;
     @Version
     private Integer version = 0;
+
     @Override
     public String toString() {
         return JSONObject.toJSONString(this);

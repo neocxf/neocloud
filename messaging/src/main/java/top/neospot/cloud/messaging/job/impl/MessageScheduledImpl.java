@@ -8,9 +8,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.neospot.cloud.common.model.Message;
+import top.neospot.cloud.messaging.api.RpTransactionMessageService;
 import top.neospot.cloud.messaging.job.MessageScheduled;
 import top.neospot.cloud.messaging.mapper.MessageMapper;
-import top.neospot.cloud.messaging.service.RpTransactionMessageService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,12 +39,18 @@ public class MessageScheduledImpl implements MessageScheduled, InitializingBean,
             public void run() {
                 log.info("executing handleWaitingConfirmTimeOutMessages task ...");
 
-                LambdaQueryWrapper<Message> sending = Wrappers.<Message>lambdaQuery().eq(Message::getStatus, "WAIT_CONFIRM").le(Message::getMessageSendTimes, 5).apply("timediff({0}, last_update_time) >= time('00:05:00')", LocalDateTime.now());
-                System.out.println(sending.getSqlSelect());
-                System.out.println(sending.getCustomSqlSegment());
+                LambdaQueryWrapper<Message> sending = Wrappers.<Message>lambdaQuery().eq(Message::getStatus, "WAITING_CONFIRM").le(Message::getMessageSendTimes, 5).apply("timediff({0}, last_update_time) >= time('00:05:00')", LocalDateTime.now());
+
                 List<Message> messages = messageMapper.selectList(sending);
 
-                System.out.println(messages);
+                messages.forEach(message -> {
+                    // TODO: check biz status through message field1 {by remote api call (the message producer logic)}
+                    // if success
+                    rpTransactionMessageService.confirmAndSendMessage(message.getMessageId());
+
+                    // if fail
+                    rpTransactionMessageService.deleteMessageByMessageId(message.getMessageId());
+                });
 
 
                 //TODO: send to mq
@@ -63,11 +69,9 @@ public class MessageScheduledImpl implements MessageScheduled, InitializingBean,
                 List<Message> messages = messageMapper.selectList(sending);
 
                 System.out.println(messages);
+                messages.forEach(message -> rpTransactionMessageService.reSendMessage(message));
 
 
-                //TODO: send to mq
-
-                //TODO: message-send-times + 1
             }
         }, 5000, 300000);
     }
@@ -77,8 +81,8 @@ public class MessageScheduledImpl implements MessageScheduled, InitializingBean,
         waitingConfirmTimer = new Timer(true);
         sendingTimeoutTimer = new Timer(true);
 
-        handleSendingTimeOutMessage();
-        handleWaitingConfirmTimeOutMessages();
+//        handleSendingTimeOutMessage();
+//        handleWaitingConfirmTimeOutMessages();
     }
 
 

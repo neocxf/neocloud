@@ -26,7 +26,7 @@ public class ShippingOrderTest extends ShippingAppTest {
         ShippingOrder user = shippingMapper.selectOne(queryWrapper);
 
         if (user == null) {
-            user = new ShippingOrder().setRewardExchangeId(1).setType(1).setNumber(1).setProductId(1).setAddr("pudong");
+            user = new ShippingOrder().setRewardExchangeId(1L).setType("reward").setNumber(1L).setProductId(1L).setAddr("pudong");
             shippingMapper.insert(user);
         }
 
@@ -88,7 +88,7 @@ public class ShippingOrderTest extends ShippingAppTest {
         // update a record to check the timestamp working
         QueryWrapper<ShippingOrder> queryWrapper1 = new QueryWrapper<>();
         queryWrapper.lambda().eq(ShippingOrder::getRewardExchangeId, 1)   ;
-        ShippingOrder user = new ShippingOrder().setNumber(3).setRewardExchangeId(1);
+        ShippingOrder user = new ShippingOrder().setNumber(3L).setRewardExchangeId(1L);
 
         shippingMapper.update(user, queryWrapper1);
 

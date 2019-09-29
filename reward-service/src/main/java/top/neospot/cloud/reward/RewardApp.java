@@ -1,6 +1,9 @@
 package top.neospot.cloud.reward;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
@@ -12,6 +15,7 @@ import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import top.neospot.cloud.messaging.api.RpTransactionMessageService;
 
 import java.util.Collections;
 
@@ -23,7 +27,8 @@ import java.util.Collections;
 @EnableEurekaClient
 @EnableFeignClients
 @EnableSwagger2
-public class RewardApp {
+@Slf4j
+public class RewardApp implements CommandLineRunner {
 
     public static void main(String[] args) {
         SpringApplication.run(RewardApp.class, args);
@@ -50,5 +55,14 @@ public class RewardApp {
                 "https://www.apache.org/licenses/LICENSE-2.0",
                 Collections.emptyList()
         );
+    }
+
+    @Reference(version = "${demo.service.version}")
+    private RpTransactionMessageService rpTransactionMessageService;
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("hello");
+        System.out.println(rpTransactionMessageService.sayHello("neo"));
     }
 }

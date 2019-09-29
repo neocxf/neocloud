@@ -14,9 +14,12 @@ import top.neospot.cloud.common.model.BaseModel;
 @Data
 @Accessors(chain = true)
 public class RewardExchange extends BaseModel {
-    private int productId;
-    private int userId;
-    private int credit;
+    private Long productId;
+    private Long userId;
+    private Long credit;
+    private Long rewardId;
+    private Long orderId;
+
     @Override
     public String toString() {
         return JSONObject.toJSONString(this);

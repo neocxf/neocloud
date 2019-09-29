@@ -7,5 +7,5 @@ import top.neospot.cloud.reward.entity.Reward;
  * By neo.chen{neocxf@gmail.com} on 2019/9/18.
  */
 public interface RewardMapper extends BaseMapper<Reward> {
-    Reward queryOrderById(int id);
+    Reward queryOrderById(Long id);
 }

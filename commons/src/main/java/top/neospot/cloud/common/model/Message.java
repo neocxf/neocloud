@@ -19,12 +19,16 @@ public class Message extends BaseModel {
     private String creator;
     @Builder.Default
     private Date editTime = new Date();
-    private Long messageId;
+    private String messageId;
     private String messageBody;
     private String messageDateType;
     private String consumerQueue;
     private Integer messageSendTimes;
     private Boolean alreadyDead;
+    /**
+     * WAITING_CONFIRM: wait the transaction to succeed and send the message
+     * SENDING: send the message to the downstream
+     */
     private String status;
     private String remark;
     private String field;
