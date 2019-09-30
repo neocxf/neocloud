@@ -20,29 +20,6 @@ public class MessagingApp {
 
     public static void main(String[] args) {
         // Launch the application
-        ConfigurableApplicationContext context = SpringApplication.run(MessagingApp.class, args);
-
-//        JmsTemplate jmsTemplate = context.getBean(JmsTemplate.class);
-//
-//        // Send a message with a POJO - the template reuse the message converter
-//        System.out.println("Sending an email message.");
-//        Message message = new Message();
-//        message.setMessageId("1");
-//        Map<String, String> stringMap = new HashMap<>();
-//        stringMap.put("type", "reward_shipping");
-//        stringMap.put("product_id", "1");
-//        stringMap.put("user_id", "1");
-//        stringMap.put("rewardExchangeId", "1");
-//        stringMap.put("num", "2");
-//        stringMap.put("addr", "pudong");
-//        message.setMessageBody(JSON.toJSONString(stringMap));
-//        message.setMessageDateType("json");
-//        message.setAlreadyDead(false);
-//        message.setConsumerQueue("reward_shipping");
-//        message.setMessageSendTimes(0);
-//        message.setCreator("neo");
-//        message.setEditor("neo");
-//        message.setStatus("PRE_SEND");
-//        jmsTemplate.convertAndSend("reward_shipping", message);
+        SpringApplication.run(MessagingApp.class, args);
     }
 }

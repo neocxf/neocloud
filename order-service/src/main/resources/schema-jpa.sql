@@ -1,5 +1,4 @@
-# 积分表
-# 每条记录代表某个用户持有的积分的数量
+
 create table if not exists `t_order` (
     id int primary key auto_increment,
     product_id  int default null,
@@ -33,7 +32,7 @@ CREATE TABLE `order_0`  (
     `address_id` BIGINT NOT NULL,
     `status` VARCHAR(50),
     `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
-    `total_price` int(10),
+    `total_price` double DEFAULT NULL,
     PRIMARY KEY (`order_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
@@ -47,7 +46,7 @@ CREATE TABLE `order_1`  (
     `address_id` BIGINT NOT NULL,
     `status` VARCHAR(50),
     `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
-    `total_price` int(10),
+    `total_price` double DEFAULT NULL,
     PRIMARY KEY (`order_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
@@ -60,7 +59,7 @@ CREATE TABLE `order_item_0`  (
     `order_id` bigint(32) NOT NULL,
     `status` VARCHAR(50),
     `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-    `price` int(10),
+    `price` double DEFAULT NULL,
     `user_id` bigint(20) NOT NULL DEFAULT 0,
     PRIMARY KEY (`order_item_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
@@ -74,7 +73,7 @@ CREATE TABLE `order_item_1`  (
     `order_id` bigint(32) NOT NULL,
     `status` VARCHAR(50),
     `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-    `price` int(10) ,
+    `price` double DEFAULT NULL,
     `user_id` bigint(20) NOT NULL DEFAULT 0,
     PRIMARY KEY (`order_item_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
