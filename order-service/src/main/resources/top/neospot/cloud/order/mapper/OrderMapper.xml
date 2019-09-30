@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.neospot.cloud.order.mapper.OrderMapper">
+
+    <resultMap id="completeOrderMap" type="top.neospot.cloud.order.entity.Order">
+        <id column="order_id" property="orderId"/>
+        <result column="user_id" property="userId"/>
+        <result column="address_id" property="addressId"/>
+        <result column="status" property="status"/>
+        <collection property="items" ofType="top.neospot.cloud.order.entity.OrderItem" select="findOrderItemById" column="order_id"/>
+    </resultMap>
+
+    <select id="findOrderById" resultMap="completeOrderMap">
+        select * from order where order_id=#{id}
+    </select>
+
+    <select id="findOrderItemById" resultType="top.neospot.cloud.order.entity.OrderItem">
+        select * from order_item where order_id=#{id};
+    </select>
+</mapper>
