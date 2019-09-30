@@ -8,7 +8,7 @@ RUN apk add --update \
     curl \
     && rm -rf /var/cache/apk/*
 
-ADD ./target/orderEntity-service.jar /app.jar
+ADD ./target/order-service.jar /app.jar
 
 ENTRYPOINT exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar
 
