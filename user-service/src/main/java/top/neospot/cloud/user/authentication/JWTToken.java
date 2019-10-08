@@ -1,27 +1,28 @@
 package top.neospot.cloud.user.authentication;
 
-import lombok.Data;
-import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.authc.HostAuthenticationToken;
 
-/**
- * JSON Web Token
- */
-@Data
-public class JWTToken implements AuthenticationToken {
-
-    private static final long serialVersionUID = 1282057025599826155L;
-
-    private String token;
-
-    private String exipreAt;
+public class JWTToken implements HostAuthenticationToken {
+	private static final long serialVersionUID = 9217639903967592166L;
+	
+	private String token;
+    private String host;
 
     public JWTToken(String token) {
-        this.token = token;
+        this(token, null);
     }
 
-    public JWTToken(String token, String exipreAt) {
+    public JWTToken(String token, String host) {
         this.token = token;
-        this.exipreAt = exipreAt;
+        this.host = host;
+    }
+
+    public String getToken(){
+        return this.token;
+    }
+
+    public String getHost() {
+        return host;
     }
 
     @Override
@@ -34,4 +35,8 @@ public class JWTToken implements AuthenticationToken {
         return token;
     }
 
+    @Override
+    public String toString(){
+        return token + ':' + host;
+    }
 }

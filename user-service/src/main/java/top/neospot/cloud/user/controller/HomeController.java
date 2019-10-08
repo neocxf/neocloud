@@ -10,16 +10,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import top.neospot.cloud.user.entity.UserInfo;
 import top.neospot.cloud.user.pojo.ResponseBo;
-import top.neospot.cloud.user.service.UserInfoService;
+import top.neospot.cloud.user.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
 @Controller
 public class HomeController {
     @Autowired
-    private UserInfoService userInfoService;
+    private UserService userService;
 
     @RequestMapping("/success")
     @ResponseBody
@@ -68,12 +69,17 @@ public class HomeController {
 
 	@PostMapping("/login")
 	@ResponseBody
-	public ResponseBo login(String username, String password, Boolean rememberMe) {
+	public ResponseBo login(String username, String password, boolean rememberMe, HttpServletResponse response) {
 		UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
 		Subject subject = SecurityUtils.getSubject();
 		try {
 			subject.login(token);
-			return ResponseBo.ok();
+
+			UserInfo user = (UserInfo) subject.getPrincipal();
+            String newToken = userService.generateJwtToken(user.getUsername());
+            response.setHeader("x-auth-token", newToken);
+
+            return ResponseBo.ok();
 		} catch (UnknownAccountException | IncorrectCredentialsException | LockedAccountException e) {
             System.out.println(subject.isAuthenticated());
             System.out.println(subject.getPrincipal());
@@ -92,7 +98,7 @@ public class HomeController {
     public ResponseBo regist(String username, String password) {
         UserInfo regist = null;
         try {
-            regist = userInfoService.regist(username, password);
+            regist = userService.regist(username, password);
         } catch (Exception e) {
             e.printStackTrace();
         }

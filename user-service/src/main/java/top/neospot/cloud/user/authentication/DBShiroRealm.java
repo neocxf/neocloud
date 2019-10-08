@@ -1,10 +1,7 @@
 package top.neospot.cloud.user.authentication;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.AuthenticationInfo;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -13,14 +10,23 @@ import org.apache.shiro.util.ByteSource;
 import top.neospot.cloud.user.entity.SysPermission;
 import top.neospot.cloud.user.entity.SysRole;
 import top.neospot.cloud.user.entity.UserInfo;
-import top.neospot.cloud.user.service.UserInfoService;
+import top.neospot.cloud.user.service.UserService;
 
 import javax.annotation.Resource;
 
 @Slf4j
-public class CloudShiroRealm extends AuthorizingRealm {
+public class DBShiroRealm extends AuthorizingRealm {
     @Resource
-    private UserInfoService userInfoService;
+    private UserService userService;
+
+    public DBShiroRealm(UserService userService) {
+        this.userService = userService;
+    }
+    @Override
+    public boolean supports(AuthenticationToken token) {
+        return token instanceof UsernamePasswordToken;
+    }
+
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
@@ -39,15 +45,16 @@ public class CloudShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         // 获取用户输入的账户
-        String username = (String) authenticationToken.getPrincipal();
+        String principals = (String) authenticationToken.getPrincipal();
+
         log.info("getting userinfo: {}" , authenticationToken.getPrincipal());
 
 
         // 通过username从数据库中查找 UserInfo 对象
         // 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
-        UserInfo userInfo = userInfoService.findByUsername(username);
+        UserInfo userInfo = userService.findByUsername(principals);
         if (null == userInfo) {
-            return null;
+            throw new AuthenticationException("用户名或者密码错误");
         }
 
         String password = userInfo.getPassword(); //database password, later shiro will try to authenticate it
@@ -60,7 +67,7 @@ public class CloudShiroRealm extends AuthorizingRealm {
         return new SimpleAuthenticationInfo(
                 userInfo, // 用户名
                 password, // 密码
-                ByteSource.Util.bytes(username + salt), // salt=username+salt
+                ByteSource.Util.bytes(principals + salt), // salt=username+salt
                 getName() // realm name
         );
     }

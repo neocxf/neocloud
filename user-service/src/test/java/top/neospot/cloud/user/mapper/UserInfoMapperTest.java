@@ -12,7 +12,7 @@ public class UserInfoMapperTest extends UserAppTest {
 
     @Test
     public void testSelect() {
-        UserInfo userInfo = userInfoMapper.selectOneByUsername("wmyskxz");
+        UserInfo userInfo = userInfoMapper.selectOneCascadeByUsername("wmyskxz");
         System.out.println(userInfo);
         System.out.println(userInfo.getRoles());
 

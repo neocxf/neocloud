@@ -17,6 +17,7 @@ public class UserInfo {
     private String name; // 名称(匿名或真实姓名),用于UI显示
     private String password; // 密码.
     private String salt; // 加密密码的盐
+    private String tokenSalt;
     @JsonIgnoreProperties(value = {"userInfos"})
     private transient List<SysRole> roles; // 一个用户具有多个角色
 

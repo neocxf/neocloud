@@ -1,4 +1,4 @@
-package top.neospot.cloud.user.authentication;
+package top.neospot.cloud.user.filters;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.subject.PrincipalCollection;
@@ -10,8 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.filter.OncePerRequestFilter;
+import top.neospot.cloud.user.authentication.JWTUtil;
 import top.neospot.cloud.user.entity.UserInfo;
-import top.neospot.cloud.user.service.UserInfoService;
+import top.neospot.cloud.user.service.UserService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -31,7 +32,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationTokenFilter.class);
 
     @Autowired
-    private UserInfoService userService;
+    private UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)

@@ -1,4 +1,4 @@
-package top.neospot.cloud.user.authentication;
+package top.neospot.cloud.user.filters;
 
 import javax.servlet.*;
 import java.io.IOException;

@@ -36,7 +36,7 @@
         where
         ui.id = #{id}
     </select>
-    <select id="selectOneByUsername" resultMap="_userInfo">
+    <select id="selectOneCascadeByUsername" resultMap="_userInfo">
         SELECT
         ui.*,
         sr.id role_id,
@@ -51,6 +51,21 @@
         left outer join sys_permission sp on (srp.permission_id = sp.id)
         where
         ui.username = #{username}
+    </select>
+    <select id="selectAllRolePermissions" resultMap="_roles">
+        SELECT
+            sr.id role_id,
+            sr.name role_name,
+            sp.id permission_id,
+            sp.name permission_name
+        FROM
+            user_info ui
+                left outer join sys_user_role sur on (ui.id = sur.uid )
+                left outer join sys_role sr on (sur.role_id = sr.id)
+                left outer join sys_role_permission srp on (sr.id = srp.role_id)
+                left outer join sys_permission sp on (srp.permission_id = sp.id)
+        where
+            ui.username = #{username}
     </select>
     <select id="selectAll" resultMap="_userInfo">
         SELECT
@@ -75,6 +90,16 @@
                 <id column="permission_id" property="id"/>
                 <result column="permission_name" property="name"/>
             </collection>
+        </collection>
+    </resultMap>
+
+
+    <resultMap id="_roles" type="SysRole">
+        <id column="role_id" property="id"/>
+        <result column="role_name" property="name" />
+        <collection property="permissions" ofType="SysPermission">
+            <id column="permission_id" property="id"/>
+            <result column="permission_name" property="name"/>
         </collection>
     </resultMap>
 

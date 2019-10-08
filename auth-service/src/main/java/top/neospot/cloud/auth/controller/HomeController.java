@@ -69,7 +69,7 @@ public class HomeController {
 
 	@PostMapping("/login")
 	@ResponseBody
-	public ResponseBo login(String username, String password, Boolean rememberMe) {
+	public ResponseBo login(String username, String password, boolean rememberMe) {
 		UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
 		Subject subject = SecurityUtils.getSubject();
 		try {

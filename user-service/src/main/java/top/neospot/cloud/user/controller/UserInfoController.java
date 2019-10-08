@@ -3,7 +3,7 @@ package top.neospot.cloud.user.controller;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 import top.neospot.cloud.user.entity.UserInfo;
-import top.neospot.cloud.user.service.UserInfoService;
+import top.neospot.cloud.user.service.UserService;
 
 import javax.annotation.Resource;
 
@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 public class UserInfoController {
 
     @Resource
-    UserInfoService userInfoService;
+    UserService userService;
 
     /**
      * 按username账户从数据库中取出用户信息
@@ -22,7 +22,12 @@ public class UserInfoController {
     @GetMapping("/userList")
     @RequiresPermissions("userInfo:view") // 权限管理.
     public UserInfo findUserInfoByUsername(@RequestParam String username) {
-        return userInfoService.findByUsername(username);
+        return userService.findByUsername(username);
+    }
+
+    @GetMapping("/welcome")
+    public UserInfo findUserInfoByUsernamePublic(@RequestParam String username) {
+        return userService.findByUsername(username);
     }
 
     /**

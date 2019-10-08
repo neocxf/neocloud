@@ -2,9 +2,12 @@ package top.neospot.cloud.user.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.transaction.annotation.Transactional;
+import top.neospot.cloud.user.entity.SysRole;
 import top.neospot.cloud.user.entity.UserInfo;
 
-public interface UserInfoService extends IService<UserInfo> {
+import java.util.List;
+
+public interface UserService extends IService<UserInfo> {
     /** 通过username查找用户信息；*/
     UserInfo findByUsername(String username);
 
@@ -12,7 +15,12 @@ public interface UserInfoService extends IService<UserInfo> {
 
     UserInfo checkUserAuthenticated(String username);
 
+    String generateJwtToken(String username);
+
     @Transactional
     UserInfo regist(String username, String password) throws Exception;
 
+    UserInfo getJwtTokenInfo(String username);
+
+    List<SysRole> findRolePermissionsByUsername(String username);
 }
