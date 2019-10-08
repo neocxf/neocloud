@@ -20,6 +20,7 @@ public class RequestProcessor implements Callable<Boolean> {
     private StoppableArrayBlockingQueue<Request> queue;
     private Long id;
 
+    private ReentrantLock mainLock;
     private volatile boolean shouldStopNow;
     private volatile CountDownLatch latch;
 
@@ -27,6 +28,7 @@ public class RequestProcessor implements Callable<Boolean> {
         this.queue = queue;
         this.id = idGen.incrementAndGet();
         this.latch = latch;
+        this.mainLock = new ReentrantLock();
     }
 
     @Override
@@ -35,7 +37,6 @@ public class RequestProcessor implements Callable<Boolean> {
         Request request;
         while (! shouldStopNow) {
             request = queue.poll(1, TimeUnit.SECONDS);
-					ReentrantLock lock;
             if (request == null && queue.isRejectRecving())  {
                 // use the rewrite method, if we recv the stop signal, we could get a null value
                 log.info(String.format("%s --------------------------- stop serving, queue size: %d", dumpThreadInfo(), queue.size()));
@@ -49,7 +50,12 @@ public class RequestProcessor implements Callable<Boolean> {
 
             if (request != null) {
                 log.debug("executing a request ...");
-                request.process();
+                try {
+                    mainLock.lock();
+                    request.process();
+                } finally {
+                    mainLock.unlock();
+                }
             }
 
         }

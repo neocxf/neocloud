@@ -1,7 +1,13 @@
 package top.neospot.cloud.common.util;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicLong;
+
+@Slf4j
 public class MeasuredRate {
-    private static final Logger logger = LoggerFactory.getLogger(MeasuredRate.class);
     private final AtomicLong lastBucket = new AtomicLong(0);
     private final AtomicLong currentBucket = new AtomicLong(0);
 
@@ -15,7 +21,7 @@ public class MeasuredRate {
      */
     public MeasuredRate(long sampleInterval) {
         this.sampleInterval = sampleInterval;
-        this.timer = new Timer("Eureka-MeasureRateTimer", true);
+        this.timer = new Timer("Cloud-MeasureRateTimer", true);
         this.isActive = false;
     }
 
@@ -29,7 +35,7 @@ public class MeasuredRate {
                         // Zero out the current bucket.
                         lastBucket.set(currentBucket.getAndSet(0));
                     } catch (Throwable e) {
-                        logger.error("Cannot reset the Measured Rate", e);
+                        log.error("Cannot reset the Measured Rate", e);
                     }
                 }
             }, sampleInterval, sampleInterval);

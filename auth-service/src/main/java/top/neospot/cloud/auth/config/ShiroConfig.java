@@ -8,12 +8,19 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
-import top.neospot.cloud.auth.MyShiroRealm;
+import top.neospot.cloud.auth.authentication.MyFilter;
+import top.neospot.cloud.auth.authentication.CloudShiroRealm;
 
+import javax.servlet.Filter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ *  https://www.jianshu.com/p/504bfbbd5896
+ *  https://www.jianshu.com/p/0b1131be7ace
+ *  https://blog.csdn.net/baidu_33969289/article/details/86616058
+ */
 @Configuration
 public class ShiroConfig {
     @Bean
@@ -24,6 +31,7 @@ public class ShiroConfig {
         // 拦截器.
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
         // 配置不会被拦截的链接 顺序判断
+        filterChainDefinitionMap.put("/regist", "anon");
         filterChainDefinitionMap.put("/static/**", "anon");
         filterChainDefinitionMap.put("/h2-console/**", "anon");
         // 配置退出 过滤器,其中的具体的退出代码Shiro已经替我们实现了
@@ -34,7 +42,13 @@ public class ShiroConfig {
         // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
         shiroFilterFactoryBean.setLoginUrl("/login");
         // 登录成功后要跳转的链接
-        shiroFilterFactoryBean.setSuccessUrl("/index");
+
+        shiroFilterFactoryBean.setSuccessUrl("/success");
+
+        // 添加filter过滤
+        LinkedHashMap<String, Filter> filters = new LinkedHashMap<>();
+        filters.put("jwt", new MyFilter()); //TODO: add our custom filters
+        shiroFilterFactoryBean.setFilters(filters);
 
         //未授权界面;
         shiroFilterFactoryBean.setUnauthorizedUrl("/403");
@@ -57,10 +71,10 @@ public class ShiroConfig {
     }
 
     @Bean
-    public MyShiroRealm myShiroRealm() {
-        MyShiroRealm myShiroRealm = new MyShiroRealm();
-        myShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
-        return myShiroRealm;
+    public CloudShiroRealm myShiroRealm() {
+        CloudShiroRealm cloudShiroRealm = new CloudShiroRealm();
+        cloudShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
+        return cloudShiroRealm;
     }
 
 

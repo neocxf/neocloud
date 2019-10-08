@@ -11,7 +11,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 public class RequestAsyncProcessServiceImpl implements RequestAsyncProcessService {
     @Override
     public void process(Request request) {
-        ArrayBlockingQueue<Request> queue = getRouteQueue(request.getProductId());
+        ArrayBlockingQueue<Request> queue = getRouteQueue(request.getProductCode());
 
         try {
             queue.put(request);
@@ -21,10 +21,10 @@ public class RequestAsyncProcessServiceImpl implements RequestAsyncProcessServic
 
     }
 
-    private ArrayBlockingQueue<Request> getRouteQueue(Long productId) {
+    private ArrayBlockingQueue<Request> getRouteQueue(String productCode) {
         RequestQueue requestQueue = RequestQueue.getInstance();
 
-        String key = String.valueOf(productId);
+        String key = String.valueOf(productCode);
 
         int h;
         int hash = (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);

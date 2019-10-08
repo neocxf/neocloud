@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 定义名字空间 -->
+<mapper namespace="top.neospot.cloud.user.mapper.UserInfoMapper">
+    <delete id="addRole">
+		insert into sys_user_role (uid, role_id ) values (#{id}, #{roleId});
+	</delete>
+    <!--根据用户Id删除该用户的角色关系-->
+    <delete id="deleteRolesByUserId">
+		DELETE FROM sys_user_role WHERE uid = #{id}
+	</delete>
+
+    <delete id="deleteRole">
+		DELETE FROM sys_user_role WHERE uid = #{id} and role_id=#{roleId}
+	</delete>
+
+    <delete id="deleteRoleByRoleName">
+		DELETE sur FROM sys_user_role sur
+		 left join sys_role sr
+		 on sur.role_id=sr.id  where sur.uid =#{id} and sr.name=#{roleName};
+	</delete>
+
+    <!--用resultMap标签定义数据库的查询结果映射，这个结果不能直接和我们自定义的类进行交互，需要通过resultMap标签定义结果映射才能使用我们自定义的类接收数据。-->
+    <select id="selectOneById" resultMap="_userInfo">
+        SELECT
+        ui.*,
+        sr.id role_id,
+        sr.name role_name
+        FROM
+        user_info ui
+        left outer join sys_user_role sur on (ui.id = sur.uid )
+        left outer join sys_role sr on (sur.role_id = sr.id)
+        left outer join sys_role_permission srp on (sr.id = srp.role_id)
+        left outer join sys_permission sp on (srp.permission_id = sp.id)
+        where
+        ui.id = #{id}
+    </select>
+    <select id="selectOneByUsername" resultMap="_userInfo">
+        SELECT
+        ui.*,
+        sr.id role_id,
+        sr.name role_name,
+        sp.id permission_id,
+        sp.name permission_name
+        FROM
+        user_info ui
+        left outer join sys_user_role sur on (ui.id = sur.uid )
+        left outer join sys_role sr on (sur.role_id = sr.id)
+        left outer join sys_role_permission srp on (sr.id = srp.role_id)
+        left outer join sys_permission sp on (srp.permission_id = sp.id)
+        where
+        ui.username = #{username}
+    </select>
+    <select id="selectAll" resultMap="_userInfo">
+        SELECT
+        ui.*,
+        sr.name role_name
+        FROM
+        user_info ui
+        left outer join sys_user_role sur on (ui.id = sur.uid )
+        left outer join sys_role sr on (sur.role_id = sr.id)
+    </select>
+
+    <resultMap id="_userInfo" type="UserInfo">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="name" property="name"/>
+        <result column="password" property="password"/>
+        <result column="salt" property="salt"/>
+        <collection property="roles" ofType="SysRole">
+            <id column="role_id" property="id"/>
+            <result column="role_name" property="name" />
+            <collection property="permissions" ofType="SysPermission">
+                <id column="permission_id" property="id"/>
+                <result column="permission_name" property="name"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+
+</mapper>

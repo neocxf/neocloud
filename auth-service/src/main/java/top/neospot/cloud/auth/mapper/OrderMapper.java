@@ -1,4 +1,11 @@
 package top.neospot.cloud.auth.mapper;
 
-public class OrderMapper {
+import top.neospot.cloud.auth.entity.Order;
+
+import java.util.List;
+
+public interface OrderMapper {
+    void insert(Order order);
+    Order selectOne(Long id);
+    List<Order> selectAll();
 }

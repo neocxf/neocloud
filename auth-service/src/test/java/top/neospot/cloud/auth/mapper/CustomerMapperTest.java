@@ -7,23 +7,25 @@ import top.neospot.cloud.auth.AuthAppTest;
 import top.neospot.cloud.auth.entity.Customer;
 import top.neospot.cloud.auth.entity.Order;
 
-public class OrderMapperTest extends AuthAppTest {
+public class CustomerMapperTest extends AuthAppTest {
     @Autowired
-    OrderMapper orderMapper;
+    CustomerMapper customerMapper;
 
     @Test
     public void testInsert() {
 
-        Order order = new Order();
-        order.setOrderno("123");
-        order.setPrice(10.5f);
-
         Customer customer = new Customer();
-        customer.setId(1);
-        order.setCustomer(customer);
+        customer.setName("neo");
+        customer.setAge(30);
 
 
-        orderMapper.insert(order);
+        customerMapper.insert(customer);
 
+    }
+    @Test
+    public void testSelect() {
+        Customer customer = customerMapper.selectOne(1L);
+
+        System.out.println(customer);
     }
 }

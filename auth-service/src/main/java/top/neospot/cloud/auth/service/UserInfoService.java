@@ -1,8 +1,18 @@
 package top.neospot.cloud.auth.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.transaction.annotation.Transactional;
 import top.neospot.cloud.auth.entity.UserInfo;
 
-public interface UserInfoService {
+public interface UserInfoService extends IService<UserInfo> {
     /** 通过username查找用户信息；*/
-    public UserInfo findByUsername(String username);
+    UserInfo findByUsername(String username);
+
+    UserInfo findByUsernameFromCache(String username);
+
+    UserInfo checkUserAuthenticated(String username);
+
+    @Transactional
+    UserInfo regist(String username, String password) throws Exception;
+
 }

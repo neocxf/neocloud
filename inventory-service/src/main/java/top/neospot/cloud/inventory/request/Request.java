@@ -9,10 +9,10 @@ import java.io.Serializable;
  */
 @Data
 public abstract class Request implements Serializable {
-    private Long productId;
+    private String productCode;
 
-    public Request(long productId) {
-        this.productId = productId;
+    public Request(String productCode) {
+        this.productCode = productCode;
     }
 
     public abstract void process();

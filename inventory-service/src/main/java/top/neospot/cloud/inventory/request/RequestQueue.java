@@ -41,7 +41,7 @@ public class RequestQueue {
     public void pushRequest(Request request) {
         RequestQueue requestQueue = RequestQueue.getInstance();
 
-        String key = String.valueOf(request.getProductId());
+        String key = String.valueOf(request.getProductCode());
 
         int h;
         int hash = (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
@@ -50,9 +50,11 @@ public class RequestQueue {
 
         Queue<Request> queue = requestQueue.get(index);
 
-        Optional<Request> optional =  queue.stream().filter(q -> Objects.equals(q.getProductId(), request.getProductId())).findAny();
+        //TODO: to summarize the request of the same request (ie, order_id)
 
-        optional.ifPresent(queue::remove);
+//        Optional<Request> optional =  queue.stream().filter(q -> Objects.equals(q.getProductCode(), request.getProductCode())).findAny();
+//
+//        optional.ifPresent(queue::remove);
 
         boolean success= queue.add(request);
 

@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
-public class MyShiroRealm extends AuthorizingRealm {
+public class CloudShiroRealm extends AuthorizingRealm {
     @Resource
     private UserInfoService userInfoService;
 
@@ -52,54 +52,22 @@ public class MyShiroRealm extends AuthorizingRealm {
             return null;
         }
 
-        String password = userInfo.getPassword();
+        String password = userInfo.getPassword(); //database password, later shiro will try to authenticate it
         String salt = userInfo.getSalt();
 
         userInfo.setSalt("secret");
         userInfo.setPassword("******");
 
-        SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(
+        // here returns the actual authentication info. Shiro will later compare the password using hash-salt algorithm
+        return new SimpleAuthenticationInfo(
                 userInfo, // 用户名
                 password, // 密码
                 ByteSource.Util.bytes(username + salt), // salt=username+salt
                 getName() // realm name
         );
-        return simpleAuthenticationInfo;
     }
 
-    /**
-     * 模拟从数据库中获取权限数据
-     *
-     * @param userName
-     * @return
-     */
-    private Set<String> getPermissionsByUserName(String userName) {
-        Set<String> permissions = new HashSet<>();
-        permissions.add("user:delete");
-        permissions.add("user:add");
-        return permissions;
-    }
 
-    /**
-     * 模拟从数据库中获取角色数据
-     *
-     * @param userName
-     * @return
-     */
-    private Set<String> getRolesByUserName(String userName) {
-        Set<String> roles = new HashSet<>();
-        roles.add("admin");
-        roles.add("user");
-        return roles;
-    }
 
-    /**
-     * 模拟从数据库取凭证的过程
-     *
-     * @param userName
-     * @return
-     */
-    private String getPasswordByUserName(String userName) {
-        return "";
-    }
+
 }

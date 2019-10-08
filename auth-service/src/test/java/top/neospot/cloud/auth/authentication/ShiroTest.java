@@ -1,4 +1,4 @@
-package top.neospot.cloud.auth;
+package top.neospot.cloud.auth.authentication;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;

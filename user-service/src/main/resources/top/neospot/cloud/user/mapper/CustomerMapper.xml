@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 定义名字空间 -->
+<mapper namespace="top.neospot.cloud.user.mapper.CustomerMapper">
+    <!-- useGeneratedKeys的值为true时，表示需要使用数据库深层的keys，同时我们需要指定使用哪个深层的key。而指定具体使用哪个key我们使用keyProperty来定义！ -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        <!-- 注意，#{name}, #{age}中的name和age字样必须和我们自定义类要一致哟！ -->
+        insert into customers(name, age) values(#{name}, #{age}) ;
+    </insert>
+
+    <!--用resultMap标签定义数据库的查询结果映射，这个结果不能直接和我们自定义的类进行交互，需要通过resultMap标签定义结果映射才能使用我们自定义的类接收数据。-->
+    <select id="selectOne" resultMap="rm_Customer">
+        select
+          c.id cid ,
+          c.name cname ,
+          c.age cage ,
+          o.id oid ,
+          o.orderno oorderno ,
+          o.price oprice ,
+          o.cid ocid
+        from
+          customers c left outer join orders o on o.cid = c.id
+        where
+          c.id = #{id} ;
+    </select>
+
+    <resultMap id="rm_Customer" type="Customer">
+        <id column="cid" property="id"/>
+        <result column="cname" property="name"/>
+        <result column="cage" property="age"/>
+        <!--使用collection这个标签可以建立关联属性。多对一关系映射-->
+        <collection property="orders" ofType="Order" column="ocid">
+            <id column="oid" property="id"/>
+            <result column="oorderno" property="orderno" />
+            <result column="oprice" property="price"/>
+        </collection>
+    </resultMap>
+
+</mapper>

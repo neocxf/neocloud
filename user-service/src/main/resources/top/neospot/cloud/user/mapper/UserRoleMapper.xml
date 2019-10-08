@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.neospot.cloud.user.mapper.UserRoleMapper">
+
+    <delete id="deletePermissionsByRoleId">
+		DELETE FROM sys_role_permission WHERE role_id = #{id}
+	</delete>
+
+    <delete id="deletePermission">
+		DELETE FROM sys_role_permission WHERE role_id = #{id} and permission_id=#{permissionId}
+	</delete>
+
+    <delete id="deletePermissionByPermissionName">
+		DELETE sur FROM sys_role_permission sur
+		 left join sys_permission sp
+		 on sur.permission_id=sp.id  where sur.role_id =#{id} and sp.name=#{permissionName};
+	</delete>
+
+    <select id="selectOneById" resultMap="_sysRole">
+        SELECT
+        sr.*,
+        sr.name role_name
+        FROM
+        sys_role sr
+        left outer join sys_role_permission srp on (sr.id = srp.role_id )
+        left outer join sys_permission sp on (srp.permission_id = sp.id)
+        where
+        sr.id = #{id}
+    </select>
+    <select id="selectOneByRoleName" resultMap="_sysRole">
+        SELECT
+        sr.*,
+        sr.name role_name
+        FROM
+        sys_role sr
+        left outer join sys_role_permission srp on (sr.id = srp.role_id )
+        left outer join sys_permission sp on (srp.permission_id = sp.id)
+        where
+        sr.name = #{name}
+    </select>
+    <select id="selectAll" resultMap="_sysRole">
+        SELECT
+        sr.*,
+        sr.name role_name
+        FROM
+        sys_role sr
+        left outer join sys_role_permission srp on (sr.id = srp.role_id )
+        left outer join sys_permission sp on (srp.permission_id = sp.id)
+    </select>
+
+    <resultMap id="_sysRole" type="SysRole">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="description" property="description"/>
+        <collection property="permissions" ofType="SysPermission">
+            <id column="id" property="id"/>
+            <result column="name" property="name" />
+            <result column="url" property="url" />
+        </collection>
+    </resultMap>
+</mapper>

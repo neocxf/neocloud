@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 定义名字空间 -->
+<mapper namespace="top.neospot.cloud.auth.mapper.OrderMapper">
+    <insert id="insert">
+        <!-- 注意，我们传递的参数 #{customer.id}是对象的属性，因此，这里千万别写cid，尽管我们在创建数据库中定义的有这个字段，但是我们在定义类的时候是把它定义为对象的一个属性！ -->
+        insert into orders(orderno, price , cid) values(#{orderno}, #{price} , #{customer.id}) ;
+    </insert>
+
+    <!--用resultMap标签定义数据库的查询结果映射，这个结果不能直接和我们自定义的类进行交互，需要通过resultMap标签定义结果映射才能使用我们自定义的类接收数据。-->
+    <select id="selectOne" resultMap="rm_Order">
+        SELECT
+        <!-- 定义需要查询的别名 -->
+        o.id oid ,
+        o.orderno oorderno ,
+        o.price oprice ,
+        o.cid ocid ,
+        c.id cid ,
+        c.name cname ,
+        c.age cage
+        FROM
+        <!-- 定义需要查询的字段 -->
+        orders o
+        <!-- 使用左外连接查询 -->
+        LEFT  OUTER JOIN  customers c on o.cid = c.id
+        where
+        o.id = #{id}
+    </select>
+    <select id="selectAll" resultMap="rm_Order">
+        SELECT
+          o.id oid ,
+          o.orderno oorderno ,
+          o.price oprice ,
+          o.cid ocid ,
+          c.id cid ,
+          c.name cname ,
+          c.age cage
+        FROM
+          orders o
+          LEFT  OUTER JOIN  customers c on o.cid = c.id
+    </select>
+
+    <!-- 使用resultMap标签定义结果映射，即将id为"rm_Order"的查询结果和我们自定义的类做一个关联关系，否则直接拿查询出来的结果字段和我们自定义的字段是对应不上的！-->
+    <resultMap id="rm_Order" type="Order">
+        <!--将查询结果“oid”字段对应为我们自定义别名类“_Order”的“id"字段-->
+        <id column="oid" property="id" />
+        <result column="oorderno" property="orderno"/>
+        <result column="oprice" property="price"/>
+
+
+        <!-- 多对一关联关系 -->
+        <!-- 使用association这个标签可以建立关联属性， property表示"_Order"的属性，column是通过上面定义的"ocid"别名来查询的，而javaType表示指定"customer"岁对应的属性为"_Customer" -->
+        <association property="customer" column="ocid" javaType="Customer">
+            <!--下面就是具体的对应关系。-->
+            <id column="cid" property="id" />
+            <result column="cname" property="name" />
+            <result column="cage" property="age" />
+        </association>
+    </resultMap>
+
+</mapper>

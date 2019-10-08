@@ -26,6 +26,12 @@ public class ResponseBo extends HashMap<String, Object> {
 		return ResponseBo;
 	}
 
+	public static ResponseBo ok(Object msg) {
+		ResponseBo ResponseBo = new ResponseBo();
+		ResponseBo.put("msg", msg);
+		return ResponseBo;
+	}
+
 	public static ResponseBo ok(String msg) {
 		ResponseBo ResponseBo = new ResponseBo();
 		ResponseBo.put("msg", msg);

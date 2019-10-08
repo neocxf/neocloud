@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="top.neospot.mybatis.mapper.EmpMapperPlus">
+    <!--<cache eviction="FIFO" flushInterval="60000" readOnly="false" size="1024" >-->
+    <!--</cache>-->
+    <cache-ref namespace="top.neospot.mybatis.mapper.EmpMapper"/>
+
+    <resultMap id="empDto" type="Emp">
+        <id column="id" property="id"/>
+        <result column="last_name" property="lastName"/>
+        <result column="gender" property="gender"/>
+        <result column="email" property="email"/>
+    </resultMap>
+
+    <resultMap id="fullEmpDot" type="Emp">
+        <id column="id" property="id"/>
+        <result column="last_name" property="lastName"/>
+        <result column="gender" property="gender"/>
+        <result column="email" property="email"/>
+
+        <discriminator javaType="string" column="gender">
+            <case value="female">
+                <association property="dept" javaType="dept">
+                    <id column="id" property="id"/>
+                    <result column="dept_name" property="deptName"/>
+                </association>
+            </case>
+        </discriminator>
+
+    </resultMap>
+
+    <resultMap id="fullEmpDot2" type="Emp">
+        <id column="id" property="id"/>
+        <result column="last_name" property="lastName"/>
+        <result column="gender" property="gender"/>
+        <result column="email" property="email"/>
+        <result column="d_id" property="dept.id"/>
+        <result column="dept_name" property="dept.deptName"/>
+    </resultMap>
+
+    <resultMap id="fullEmpDot3" type="Emp">
+        <id column="id" property="id"/>
+        <result column="last_name" property="lastName"/>
+        <result column="gender" property="gender"/>
+        <result column="email" property="email"/>
+        <association property="dept" select="findDeptById" column="d_id"/>
+    </resultMap>
+
+    <resultMap id="userInfo" type="top.neospot.cloud.auth.entity.UserInfo">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="name" property="name"/>
+        <result column="salt" property="salt"/>
+        <result column="password" property="password"/>
+        <collection property="roles" ofType="top.neospot.cloud.auth.entity.SysRole">
+            <id column="id" property="id"/>
+            <result column="name" property="name"/>
+            <result column="description" property="description"/>
+            <result column="last_name" property="lastName"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="fullDeptInfoLazy" type="Dept">
+        <id column="id" property="id"/>
+        <result column="dept_name" property="deptName"/>
+        <collection property="emps" ofType="Emp" select="findEmpByDeptId" column="id">
+            <id column="eid" property="id"/>
+            <result column="gender" property="gender"/>
+            <result column="email" property="email"/>
+            <result column="last_name" property="lastName"/>
+        </collection>
+    </resultMap>
+
+    <!-- by setting useCache=false, we close the second cache -->
+    <select id="findEmpById" resultMap="empDto" useCache="true">
+        select * from emp where id=#{id}
+    </select>
+
+    <select id="findEmpByDeptId" resultMap="empDto">
+        select * from emp where d_id=#{id}
+    </select>
+
+    <select id="findFullEmpInfo" resultMap="fullEmpDot">
+        select e.id, e.last_name, e.gender, e.email, d.dept_name  from emp e left join dept d on e.d_id = d.id where e.id=#{id}
+    </select>
+
+    <select id="findFullEmpInfo2" resultMap="fullEmpDot2">
+        select e.id, e.last_name, e.gender, e.email, d.dept_name  from emp e left join dept d on e.d_id = d.id where e.id=#{id}
+    </select>
+
+    <select id="findDeptById" resultType="Dept">
+        select * from dept where id=#{id}
+    </select>
+
+    <select id="findFullEmpInfo3" resultMap="fullEmpDot3">
+        select * from emp where id=#{id}
+    </select>
+
+    <select id="findFullDeptInfo" resultMap="fullDeptInfo">
+        select d.id did, d.dept_name dept_name, e.id eid, e.last_name last_name, e.email email, e.gender gender from dept d left join emp e on d.id = e.d_id where d.id=#{id};
+    </select>
+
+    <select id="findDeptByIdLazily" resultMap="fullDeptInfoLazy">
+        select id, dept_name from dept where id=#{id}
+    </select>
+</mapper>

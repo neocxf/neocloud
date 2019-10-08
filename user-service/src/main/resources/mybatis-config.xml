@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <settings>
+        <!-- close second cache, first cache always enabled -->
+        <setting name="cacheEnabled" value="true" />
+
+        <!-- lazy loading for the association -->
+        <setting name="lazyLoadingEnabled" value="true" />
+        <setting name="aggressiveLazyLoading" value="false" />
+
+        <!-- camel case to underscore case -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+
+
+
+    <typeAliases>
+        <package name="top.neospot.cloud.user.entity"/>
+    </typeAliases>
+
+
+    <mappers>
+        <package name="top.neospot.cloud.user.mapper"/>
+    </mappers>
+
+</configuration>

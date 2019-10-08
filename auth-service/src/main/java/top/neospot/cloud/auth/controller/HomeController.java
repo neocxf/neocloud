@@ -3,18 +3,36 @@ package top.neospot.cloud.auth.controller;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import top.neospot.cloud.auth.entity.UserInfo;
 import top.neospot.cloud.auth.pojo.ResponseBo;
+import top.neospot.cloud.auth.service.UserInfoService;
 import top.neospot.cloud.auth.utils.MD5Utils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
 public class HomeController {
+    @Autowired
+    private UserInfoService userInfoService;
+
+    @RequestMapping("/success")
+    @ResponseBody
+    public ResponseBo success() {
+        Map<String,Object> result = new HashMap<>();
+        result.put("status", "OK");
+        result.put("authenticated", "true");
+        result.put("privileges", "all");
+        result.put("principal",  SecurityUtils.getSubject().getPrincipal());
+
+        return ResponseBo.ok(result);
+    }
 
     @RequestMapping({"/","/index"})
     public String index(){
@@ -52,18 +70,37 @@ public class HomeController {
 	@PostMapping("/login")
 	@ResponseBody
 	public ResponseBo login(String username, String password, Boolean rememberMe) {
-		password = MD5Utils.encrypt(username, password);
 		UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
 		Subject subject = SecurityUtils.getSubject();
 		try {
 			subject.login(token);
 			return ResponseBo.ok();
 		} catch (UnknownAccountException | IncorrectCredentialsException | LockedAccountException e) {
+            System.out.println(subject.isAuthenticated());
+            System.out.println(subject.getPrincipal());
+            System.out.println(subject.getPreviousPrincipals());
+            System.out.println(subject.getPrincipals());
 			return ResponseBo.error(e.getMessage());
 		} catch (AuthenticationException e) {
 			return ResponseBo.error("认证失败！");
 		}
+
+
 	}
+
+	@PostMapping("/regist")
+    @ResponseBody
+    public ResponseBo regist(String username, String password) {
+        UserInfo regist = null;
+        try {
+            regist = userInfoService.regist(username, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return ResponseBo.ok(regist);
+
+    }
 
     @RequestMapping("/403")
     public String unauthorizedRole(){
