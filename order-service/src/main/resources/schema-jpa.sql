@@ -29,10 +29,12 @@ DROP TABLE IF EXISTS `order_0`;
 CREATE TABLE `order_0`  (
     `order_id` bigint(32) NOT NULL,
     `user_id` bigint(32) NOT NULL,
-    `address_id` BIGINT NOT NULL,
+    `address_id` BIGINT,
     `status` VARCHAR(50),
-    `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
     `total_price` double DEFAULT NULL,
+    deleted bit(1) default 0,
+    create_time datetime,
+    last_update_time datetime,
     PRIMARY KEY (`order_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
@@ -43,10 +45,12 @@ DROP TABLE IF EXISTS `order_1`;
 CREATE TABLE `order_1`  (
     `order_id` bigint(32) NOT NULL,
     `user_id` bigint(32) NOT NULL,
-    `address_id` BIGINT NOT NULL,
+    `address_id` BIGINT ,
     `status` VARCHAR(50),
-    `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0),
     `total_price` double DEFAULT NULL,
+    deleted bit(1) default 0,
+    create_time datetime,
+    last_update_time datetime,
     PRIMARY KEY (`order_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
@@ -61,6 +65,9 @@ CREATE TABLE `order_item_0`  (
     `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
     `price` double DEFAULT NULL,
     `user_id` bigint(20) NOT NULL DEFAULT 0,
+    deleted bit(1) default 0,
+    create_time datetime,
+    last_update_time datetime,
     PRIMARY KEY (`order_item_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
@@ -75,5 +82,8 @@ CREATE TABLE `order_item_1`  (
     `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
     `price` double DEFAULT NULL,
     `user_id` bigint(20) NOT NULL DEFAULT 0,
+    deleted bit(1) default 0,
+    create_time datetime,
+    last_update_time datetime,
     PRIMARY KEY (`order_item_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
