@@ -1,4 +1,4 @@
-package top.neospot.cloud.auth;
+package top.neospot.cloud.auth.authentication;
 
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;

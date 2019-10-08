@@ -9,6 +9,7 @@ import org.apache.shiro.realm.SimpleAccountRealm;
 import org.apache.shiro.subject.Subject;
 import org.junit.Before;
 import org.junit.Test;
+import top.neospot.cloud.auth.authentication.MyRealm;
 
 /**
  * By neo.chen{neocxf@gmail.com} on 2019/7/9.
