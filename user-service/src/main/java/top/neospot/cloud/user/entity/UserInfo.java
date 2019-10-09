@@ -3,6 +3,7 @@ package top.neospot.cloud.user.entity;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@EqualsAndHashCode(exclude = {"roles"})
 public class UserInfo {
     @TableId
     private Long id;
@@ -20,6 +22,8 @@ public class UserInfo {
     private String tokenSalt;
     @JsonIgnoreProperties(value = {"userInfos"})
     private transient List<SysRole> roles; // 一个用户具有多个角色
+
+    private transient Object embedToken;
 
     /** getter and setter */
 

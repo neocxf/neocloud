@@ -20,18 +20,18 @@ import top.neospot.cloud.user.service.UserService;
  * 基于HMAC（ 散列消息认证码）的控制域
  */
 @Slf4j
-public class JWTShiroRealm extends AuthorizingRealm {
+public class CloudShiroRealm extends AuthorizingRealm {
 
     protected UserService userService;
 
-    public JWTShiroRealm(UserService userService){
+    public CloudShiroRealm(UserService userService){
         this.userService = userService;
-        this.setCredentialsMatcher(new JWTCredentialsMatcher());
+        this.setCredentialsMatcher(new CloudCredentialsMatcher());
     }
 
     @Override
     public boolean supports(AuthenticationToken token) {
-        return token instanceof JWTToken;
+        return token instanceof CloudToken;
     }
 
     /**
@@ -40,22 +40,25 @@ public class JWTShiroRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authcToken) throws AuthenticationException {
-        JWTToken jwtToken = (JWTToken) authcToken;
-        String token = jwtToken.getToken();
-        
-        UserInfo user = userService.getJwtTokenInfo(JwtUtils.getUsername(token));
-        if(user == null)
+        CloudToken cloudToken = (CloudToken) authcToken;
+        String token = cloudToken.getToken();
+
+        UserInfo userInfo = userService.getCloudTokenInfo(token);
+        if(userInfo == null)
             throw new AuthenticationException("token过期，请重新登录");
 
-        return new SimpleAuthenticationInfo(user, user.getTokenSalt(), "jwtRealm");
+        userInfo.setTokenSalt("******");
+        userInfo.setPassword("******");
+
+        return new SimpleAuthenticationInfo(userInfo, userInfo.getEmbedToken(), "cloudRealm");
     }
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-        UserInfo user = (UserInfo) principals.getPrimaryPrincipal();
+        CloudToken cloudToken = (CloudToken) principals.getPrimaryPrincipal();
 
-        for (SysRole role : userService.findRolePermissionsByUsername(user.getUsername())) {
+        for (SysRole role : userService.findRolePermissionsByUsername(cloudToken.getUsername())) {
             simpleAuthorizationInfo.addRole(role.getName());
             for (SysPermission permission : role.getPermissions()) {
                 simpleAuthorizationInfo.addStringPermission(permission.getName());

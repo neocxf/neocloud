@@ -1,6 +1,7 @@
 package top.neospot.cloud.user.controller;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 import top.neospot.cloud.user.entity.UserInfo;
 import top.neospot.cloud.user.service.UserService;
@@ -46,5 +47,11 @@ public class UserInfoController {
     @RequiresPermissions("userInfo:delete")
     public String deleteUserInfo() {
         return "deleteUserInfo success!";
+    }
+
+    @PutMapping("/modify")
+    @RequiresRoles({"admin"})
+    public String updateUserInfo() {
+        return "updateUserInfo success";
     }
 }

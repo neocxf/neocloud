@@ -33,18 +33,6 @@ public class HomeController {
         return ResponseBo.ok(result);
     }
 
-    /**
-     * 按username账户从数据库中取出用户信息
-     *
-     * @param username 账户
-     * @return
-     */
-    @GetMapping("/users/list")
-    @RequiresPermissions("userInfo:view") // 权限管理.
-    public UserInfo findUserInfoByUsername(@RequestParam String username) {
-        return userService.findByUsername(username);
-    }
-
     @GetMapping("/welcome")
     @ResponseBody
     public UserInfo findUserInfoByUsernamePublic(@RequestParam String username) {
@@ -94,7 +82,9 @@ public class HomeController {
 
 			UserInfo user = (UserInfo) subject.getPrincipal();
             String newToken = userService.generateJwtToken(user.getUsername());
+            String newCloudToken = userService.generateCloudToken(user.getUsername());
             response.setHeader("x-auth-token", newToken);
+            response.setHeader("x-cloud-token", newCloudToken);
 
             return ResponseBo.ok();
 		} catch (UnknownAccountException | IncorrectCredentialsException | LockedAccountException e) {

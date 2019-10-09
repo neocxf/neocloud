@@ -4,10 +4,10 @@ import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
+import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.mgt.SessionStorageEvaluator;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.spring.web.config.DefaultShiroFilterChainDefinition;
 import org.apache.shiro.spring.web.config.ShiroFilterChainDefinition;
@@ -16,9 +16,11 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import top.neospot.cloud.user.authentication.CloudShiroRealm;
 import top.neospot.cloud.user.authentication.DBShiroRealm;
 import top.neospot.cloud.user.authentication.JWTShiroRealm;
 import top.neospot.cloud.user.filters.AnyRolesAuthorizationFilter;
+import top.neospot.cloud.user.filters.CloudAuthFilter;
 import top.neospot.cloud.user.filters.JwtAuthFilter;
 import top.neospot.cloud.user.service.UserService;
 
@@ -50,7 +52,7 @@ public class ShiroConfig {
     @Bean
     public Authenticator authenticator(UserService userService) {
         ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
-        authenticator.setRealms(Arrays.asList(jwtShiroRealm(userService), dbShiroRealm(userService)));
+        authenticator.setRealms(Arrays.asList(jwtShiroRealm(userService), dbShiroRealm(userService), cloudShiroRealm(userService)));
         authenticator.setAuthenticationStrategy(new FirstSuccessfulStrategy());
         return authenticator;
     }
@@ -62,7 +64,7 @@ public class ShiroConfig {
         return sessionStorageEvaluator;
     }
 
-    public HashedCredentialsMatcher hashedCredentialsMatcher() {
+    private HashedCredentialsMatcher hashedCredentialsMatcher() {
         HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
         hashedCredentialsMatcher.setHashAlgorithmName("md5"); // 散列算法:这里使用MD5算法;
         hashedCredentialsMatcher.setHashIterations(2); // 散列的次数，比如散列两次，相当于 md5(md5(""));
@@ -73,13 +75,22 @@ public class ShiroConfig {
     public Realm dbShiroRealm(UserService userService) {
         DBShiroRealm dbShiroRealm = new DBShiroRealm(userService);
         dbShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
+        dbShiroRealm.setAuthenticationCachingEnabled(true);
         return dbShiroRealm;
     }
 
     @Bean("jwtRealm")
     public Realm jwtShiroRealm(UserService userService) {
         JWTShiroRealm myShiroRealm = new JWTShiroRealm(userService);
+        myShiroRealm.setAuthenticationCachingEnabled(true);
         return myShiroRealm;
+    }
+
+    @Bean("cloudRealm")
+    public Realm cloudShiroRealm(UserService userService) {
+        CloudShiroRealm cloudRealm = new CloudShiroRealm(userService);
+        cloudRealm.setAuthenticationCachingEnabled(true);
+        return cloudRealm;
     }
 
     /**
@@ -90,7 +101,8 @@ public class ShiroConfig {
     	ShiroFilterFactoryBean factoryBean = new ShiroFilterFactoryBean();
         factoryBean.setSecurityManager(securityManager);
         Map<String, Filter> filterMap = factoryBean.getFilters();
-        filterMap.put("authcToken", createAuthFilter(userService));
+//        filterMap.put("authcToken", createAuthFilter(userService));
+        filterMap.put("authcToken", createCloudAuthFilter(userService));
         filterMap.put("anyRole", createRolesFilter());
         factoryBean.setFilterChainDefinitionMap(shiroFilterChainDefinition().getFilterChainMap());
         factoryBean.setFilters(filterMap);
@@ -122,14 +134,23 @@ public class ShiroConfig {
         return new JwtAuthFilter(userService);
     }
 
+    protected CloudAuthFilter createCloudAuthFilter(UserService userService){
+        return new CloudAuthFilter(userService);
+    }
+
     protected AnyRolesAuthorizationFilter createRolesFilter(){
         return new AnyRolesAuthorizationFilter();
     }
 
     @Bean
+    public CacheManager cacheManager() {
+        return new org.apache.shiro.cache.MemoryConstrainedCacheManager();
+    }
+
+    @Bean
     public static DefaultAdvisorAutoProxyCreator getDefaultAdvisorAutoProxyCreator() {
         DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();
-        /**
+        /*
          * setUsePrefix(false)用于解决一个奇怪的bug。在引入spring aop的情况下。
          * 在@Controller注解的类的方法中加入@RequiresRole注解，会导致该方法无法映射请求，导致返回404。
          * 加入这项配置能解决这个bug

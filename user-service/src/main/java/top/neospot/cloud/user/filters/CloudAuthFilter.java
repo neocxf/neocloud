@@ -1,6 +1,7 @@
 package top.neospot.cloud.user.filters;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -11,8 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
-import top.neospot.cloud.user.authentication.JWTToken;
-import top.neospot.cloud.user.authentication.JwtUtils;
+import top.neospot.cloud.user.authentication.CloudToken;
 import top.neospot.cloud.user.entity.UserInfo;
 import top.neospot.cloud.user.pojo.ResponseBo;
 import top.neospot.cloud.user.service.UserService;
@@ -26,13 +26,13 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
-public class JwtAuthFilter extends AuthenticatingFilter {
-	private final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
-	
+@Slf4j
+public class CloudAuthFilter extends AuthenticatingFilter {
+
     private static final int tokenRefreshInterval = 300;
     private UserService userService;
 
-    public JwtAuthFilter(UserService userService){
+    public CloudAuthFilter(UserService userService){
         this.userService = userService;
         this.setLoginUrl("/login");
     }
@@ -49,14 +49,14 @@ public class JwtAuthFilter extends AuthenticatingFilter {
     @Override
     protected void postHandle(ServletRequest request, ServletResponse response){
         this.fillCorsHeader(WebUtils.toHttp(request), WebUtils.toHttp(response));
-        request.setAttribute("jwtShiroFilter.FILTERED", true);
+        request.setAttribute("cloudShiroFilter.FILTERED", true);
     }
 
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         if(this.isLoginRequest(request, response))
             return true;
-        Boolean afterFiltered = (Boolean)(request.getAttribute("jwtShiroFilter.FILTERED"));
+        Boolean afterFiltered = (Boolean)(request.getAttribute("cloudShiroFilter.FILTERED"));
         if(BoolUtils.isTrue(afterFiltered))
         	return true;
 
@@ -73,9 +73,9 @@ public class JwtAuthFilter extends AuthenticatingFilter {
 
     @Override
     protected AuthenticationToken createToken(ServletRequest servletRequest, ServletResponse servletResponse) {
-        String jwtToken = getAuthzHeader(servletRequest);
-        if(StringUtils.isNotBlank(jwtToken)&&!JwtUtils.isTokenExpired(jwtToken))
-            return new JWTToken(jwtToken);
+        String cloudToken = getAuthzHeader(servletRequest);
+        if(StringUtils.isNotBlank(cloudToken))
+            return new CloudToken(cloudToken);
 
         return null;
     }
@@ -95,16 +95,22 @@ public class JwtAuthFilter extends AuthenticatingFilter {
     protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) throws Exception {
         HttpServletResponse httpResponse = WebUtils.toHttp(response);
         String newToken = null;
-        if(token instanceof JWTToken){
-            JWTToken jwtToken = (JWTToken)token;
-            UserInfo user = (UserInfo) subject.getPrincipal();
-            boolean shouldRefresh = shouldTokenRefresh(JwtUtils.getIssuedAt(jwtToken.getToken()));
-            if(shouldRefresh) {
-                newToken = userService.generateJwtToken(user.getUsername());
+        if(token instanceof CloudToken){
+            UserInfo userInfo = (UserInfo) subject.getPrincipal();
+
+            CloudToken cloudToken;
+
+            if (userInfo.getEmbedToken() != null && userInfo.getEmbedToken() instanceof CloudToken) {
+                cloudToken = (CloudToken) userInfo.getEmbedToken();
+
+                if(shouldTokenRefresh(cloudToken.getExpiredAt())) {
+                    newToken = userService.generateCloudToken(userInfo.getUsername());
+                }
             }
+
         }
         if(StringUtils.isNotBlank(newToken))
-            httpResponse.setHeader("x-auth-token", newToken);
+            httpResponse.setHeader("x-cloud-token", newToken);
 
         return true;
     }
@@ -117,13 +123,13 @@ public class JwtAuthFilter extends AuthenticatingFilter {
 
     protected String getAuthzHeader(ServletRequest request) {
         HttpServletRequest httpRequest = WebUtils.toHttp(request);
-        String header = httpRequest.getHeader("x-auth-token");
+        String header = httpRequest.getHeader("x-cloud-token");
         return StringUtils.removeStart(header, "Bearer ");
     }
 
     protected boolean shouldTokenRefresh(Date issueAt){
         LocalDateTime issueTime = LocalDateTime.ofInstant(issueAt.toInstant(), ZoneId.systemDefault());
-        return LocalDateTime.now().minusSeconds(tokenRefreshInterval).isAfter(issueTime);
+        return LocalDateTime.now().plusSeconds(tokenRefreshInterval).isAfter(issueTime);
     }
 
     protected void fillCorsHeader(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){

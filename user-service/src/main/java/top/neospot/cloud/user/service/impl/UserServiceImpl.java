@@ -1,6 +1,6 @@
 package top.neospot.cloud.user.service.impl;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.shiro.SecurityUtils;
@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.neospot.cloud.common.exceptions.CloudBizException;
+import top.neospot.cloud.user.authentication.CloudToken;
 import top.neospot.cloud.user.authentication.JwtUtils;
 import top.neospot.cloud.user.entity.SysRole;
 import top.neospot.cloud.user.entity.UserInfo;
@@ -16,13 +17,17 @@ import top.neospot.cloud.user.mapper.UserInfoMapper;
 import top.neospot.cloud.user.service.UserService;
 import top.neospot.cloud.user.utils.MD5Utils;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> implements UserService {
-    private static final String USER_PREFIX = "neocloud:auth:userinfo:";
-    private static final Integer ttlInSec = 60 * 30;
+    private static final Integer ttlInSec = 60 * 60;
+
     @Autowired
     StringRedisTemplate redisTemplate;
 
@@ -35,20 +40,8 @@ public class UserServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> imple
     }
 
     @Override
-    public UserInfo findByUsernameFromCache(String username) {
-        String userInfoString = (String) redisTemplate.boundValueOps(USER_PREFIX + username).get();
-        UserInfo userInfo = null;
-        if (userInfoString != null) {
-            userInfo = JSON.parseObject(userInfoString, UserInfo.class);
-            return userInfo;
-        }
-        return null;
-    }
-
-    @Override
     public UserInfo checkUserAuthenticated(String username) {
-        UserInfo userInfo = (UserInfo) SecurityUtils.getSubject().getPrincipal();
-        return userInfo;
+        return (UserInfo) SecurityUtils.getSubject().getPrincipal();
     }
 
     /**
@@ -60,6 +53,27 @@ public class UserServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> imple
         String salt = JwtUtils.generateSalt();
         redisTemplate.opsForValue().set("token:salt:"+username, salt, 3600, TimeUnit.SECONDS);
         return JwtUtils.sign(username, salt, 3600); //生成jwt token，设置过期时间为1小时
+    }
+
+    @Override
+    public String generateCloudToken(String username) {
+        String salt = JwtUtils.generateSalt();
+
+        CloudToken cloudToken = new CloudToken(salt);
+        cloudToken.setUsername(username);
+        cloudToken.setExpiredAt(Date.from(LocalDateTime.now().plus(ttlInSec, ChronoUnit.SECONDS).atZone( ZoneId.systemDefault()).toInstant()));
+        redisTemplate.opsForValue().set("token:cloud:"+salt, JSONObject.toJSONString(cloudToken), ttlInSec, TimeUnit.SECONDS);
+        return salt;
+    }
+
+    @Override
+    public UserInfo getCloudTokenInfo(String token) {
+        String tokenVal = redisTemplate.opsForValue().get("token:cloud:"+token);
+        CloudToken cloudToken = JSONObject.parseObject(tokenVal, CloudToken.class);
+        if (cloudToken == null) return null;
+        UserInfo userInfo = getBaseMapper().selectOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUsername, cloudToken.getUsername()));
+        userInfo.setEmbedToken(cloudToken);
+        return userInfo;
     }
 
 

@@ -13,6 +13,7 @@ import top.neospot.cloud.user.entity.UserInfo;
 import top.neospot.cloud.user.service.UserService;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Slf4j
 public class DBShiroRealm extends AuthorizingRealm {
@@ -33,12 +34,16 @@ public class DBShiroRealm extends AuthorizingRealm {
         // 能进入这里说明用户已经通过验证了
         UserInfo userInfo = (UserInfo) principalCollection.getPrimaryPrincipal();
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-        for (SysRole role : userInfo.getRoles()) {
+
+        List<SysRole> sysRoles = userService.findRolePermissionsByUsername(userInfo.getUsername());
+
+        for (SysRole role : sysRoles) {
             simpleAuthorizationInfo.addRole(role.getName());
             for (SysPermission permission : role.getPermissions()) {
                 simpleAuthorizationInfo.addStringPermission(permission.getName());
             }
         }
+
         return simpleAuthorizationInfo;
     }
 
@@ -71,8 +76,5 @@ public class DBShiroRealm extends AuthorizingRealm {
                 getName() // realm name
         );
     }
-
-
-
 
 }

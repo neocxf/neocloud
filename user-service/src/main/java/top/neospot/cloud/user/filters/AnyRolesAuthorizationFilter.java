@@ -1,9 +1,11 @@
 package top.neospot.cloud.user.filters;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authz.AuthorizationFilter;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.http.HttpStatus;
+import top.neospot.cloud.user.pojo.ResponseBo;
 import top.neospot.cloud.user.utils.BoolUtils;
 
 import javax.servlet.ServletRequest;
@@ -42,6 +44,7 @@ public class AnyRolesAuthorizationFilter  extends AuthorizationFilter {
         httpResponse.setCharacterEncoding("UTF-8");
         httpResponse.setContentType("application/json;charset=utf-8");
         httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+        httpResponse.getOutputStream().write(JSONObject.toJSONString(ResponseBo.error(401, "you have no privileges, try login or apply more privileges")).getBytes());
         return false;
     }
 
