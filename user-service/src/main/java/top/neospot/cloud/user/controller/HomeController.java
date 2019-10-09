@@ -2,12 +2,11 @@ package top.neospot.cloud.user.controller;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import top.neospot.cloud.user.entity.UserInfo;
 import top.neospot.cloud.user.pojo.ResponseBo;
 import top.neospot.cloud.user.service.UserService;
@@ -32,6 +31,24 @@ public class HomeController {
         result.put("principal",  SecurityUtils.getSubject().getPrincipal());
 
         return ResponseBo.ok(result);
+    }
+
+    /**
+     * 按username账户从数据库中取出用户信息
+     *
+     * @param username 账户
+     * @return
+     */
+    @GetMapping("/users/list")
+    @RequiresPermissions("userInfo:view") // 权限管理.
+    public UserInfo findUserInfoByUsername(@RequestParam String username) {
+        return userService.findByUsername(username);
+    }
+
+    @GetMapping("/welcome")
+    @ResponseBody
+    public UserInfo findUserInfoByUsernamePublic(@RequestParam String username) {
+        return userService.findByUsername(username);
     }
 
     @RequestMapping({"/","/index"})

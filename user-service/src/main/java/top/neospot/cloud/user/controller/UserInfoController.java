@@ -8,6 +8,7 @@ import top.neospot.cloud.user.service.UserService;
 import javax.annotation.Resource;
 
 @RestController
+@RequestMapping("/users")
 public class UserInfoController {
 
     @Resource
@@ -19,14 +20,9 @@ public class UserInfoController {
      * @param username 账户
      * @return
      */
-    @GetMapping("/userList")
+    @GetMapping("/list")
     @RequiresPermissions("userInfo:view") // 权限管理.
     public UserInfo findUserInfoByUsername(@RequestParam String username) {
-        return userService.findByUsername(username);
-    }
-
-    @GetMapping("/welcome")
-    public UserInfo findUserInfoByUsernamePublic(@RequestParam String username) {
         return userService.findByUsername(username);
     }
 
@@ -35,7 +31,7 @@ public class UserInfoController {
      *
      * @return
      */
-    @PostMapping("/userAdd")
+    @PostMapping("/add")
     @RequiresPermissions("userInfo:add")
     public String addUserInfo() {
         return "addUserInfo success!";
@@ -46,7 +42,7 @@ public class UserInfoController {
      *
      * @return
      */
-    @DeleteMapping("/userDelete")
+    @DeleteMapping("/delete")
     @RequiresPermissions("userInfo:delete")
     public String deleteUserInfo() {
         return "deleteUserInfo success!";
