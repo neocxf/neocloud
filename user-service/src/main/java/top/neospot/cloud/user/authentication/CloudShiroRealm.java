@@ -56,9 +56,9 @@ public class CloudShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-        CloudToken cloudToken = (CloudToken) principals.getPrimaryPrincipal();
+        UserInfo userInfo = (UserInfo) principals.getPrimaryPrincipal();
 
-        for (SysRole role : userService.findRolePermissionsByUsername(cloudToken.getUsername())) {
+        for (SysRole role : userService.findRolePermissionsByUsername(userInfo.getUsername())) {
             simpleAuthorizationInfo.addRole(role.getName());
             for (SysPermission permission : role.getPermissions()) {
                 simpleAuthorizationInfo.addStringPermission(permission.getName());

@@ -9,6 +9,9 @@ import top.neospot.cloud.user.entity.UserInfo;
 
 import java.util.Date;
 
+/**
+ *  for now, we just check whether the token is expired. Later we can add the checking of the host for example
+ */
 @Slf4j
 public class CloudCredentialsMatcher implements CredentialsMatcher {
 

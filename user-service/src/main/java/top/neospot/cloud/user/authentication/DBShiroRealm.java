@@ -12,22 +12,20 @@ import top.neospot.cloud.user.entity.SysRole;
 import top.neospot.cloud.user.entity.UserInfo;
 import top.neospot.cloud.user.service.UserService;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 @Slf4j
 public class DBShiroRealm extends AuthorizingRealm {
-    @Resource
     private UserService userService;
 
     public DBShiroRealm(UserService userService) {
         this.userService = userService;
     }
+
     @Override
     public boolean supports(AuthenticationToken token) {
         return token instanceof UsernamePasswordToken;
     }
-
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {

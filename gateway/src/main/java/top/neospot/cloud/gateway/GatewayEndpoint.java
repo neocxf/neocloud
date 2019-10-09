@@ -15,6 +15,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.Collections;
 
 /**
+ *  TODO:  集成shiro完成权限认证
  * By neo.chen{neocxf@gmail.com} on 2018/8/24.
  */
 @SpringBootApplication

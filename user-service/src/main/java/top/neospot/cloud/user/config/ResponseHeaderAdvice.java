@@ -25,10 +25,6 @@ public class ResponseHeaderAdvice implements ResponseBodyAdvice<Object> {
                                   ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
         ServletServerHttpRequest serverRequest = (ServletServerHttpRequest)serverHttpRequest;
         ServletServerHttpResponse serverResponse = (ServletServerHttpResponse)serverHttpResponse;
-        if(serverRequest == null || serverResponse == null
-                || serverRequest.getServletRequest() == null || serverResponse.getServletResponse() == null) {
-            return o;
-        }
 
         // 对于未添加跨域消息头的响应进行处理
         HttpServletRequest request = serverRequest.getServletRequest();

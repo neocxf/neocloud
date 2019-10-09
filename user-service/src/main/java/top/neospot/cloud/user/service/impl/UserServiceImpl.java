@@ -110,7 +110,7 @@ public class UserServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> imple
         if (salt == null) return null;
 
         UserInfo user = getBaseMapper().selectOne(Wrappers.<UserInfo>lambdaQuery().eq(UserInfo::getUsername, username));
-        user.setTokenSalt(salt);
+        user.setEmbedToken(salt);
         return user;
     }
 
