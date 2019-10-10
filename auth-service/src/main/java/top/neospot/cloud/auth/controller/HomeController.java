@@ -36,7 +36,7 @@ public class HomeController {
 
     @RequestMapping({"/","/index"})
     public String index(){
-        return"/index";
+        return"/home.html";
     }
 
     @RequestMapping("/login")

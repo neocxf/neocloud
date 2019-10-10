@@ -6,6 +6,7 @@ import top.neospot.cloud.auth.entity.UserInfo;
 import top.neospot.cloud.auth.service.UserInfoService;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 public class UserInfoController {
@@ -21,8 +22,8 @@ public class UserInfoController {
      */
     @GetMapping("/userList")
     @RequiresPermissions("userInfo:view") // 权限管理.
-    public UserInfo findUserInfoByUsername(@RequestParam String username) {
-        return userInfoService.findByUsername(username);
+    public List<UserInfo> findUserInfoByUsername() {
+        return userInfoService.list();
     }
 
     /**

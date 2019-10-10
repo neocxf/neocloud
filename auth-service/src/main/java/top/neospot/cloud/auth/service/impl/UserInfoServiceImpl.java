@@ -7,6 +7,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import top.neospot.cloud.auth.entity.UserInfo;
@@ -22,22 +23,12 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     private static final String USER_PREFIX = "neocloud:auth:userinfo:";
     private static final Integer ttlInSec = 60 * 30;
     @Autowired
-    RedisTemplate redisTemplate;
+    StringRedisTemplate redisTemplate;
 
     @Override
     public UserInfo findByUsername(String username) {
-        UserInfo userInfo = findByUsernameFromCache(username);
 
-        if (userInfo != null) {
-            return userInfo;
-        }
-
-        // last option, get from db
-        userInfo = getBaseMapper().selectOneByUsername(username);
-
-        redisTemplate.boundValueOps(USER_PREFIX + username).set(JSONObject.toJSONString(userInfo),ttlInSec, TimeUnit.SECONDS);
-
-        return userInfo;
+        return getBaseMapper().selectOneByUsername(username);
     }
 
     @Override
