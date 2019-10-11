@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>登录页</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"></meta>
+  <title>开始使用layui</title>
   <link rel="stylesheet" href="/webjars/layui/css/layui.css"/>
   <script type="text/javascript" src="/webjars/layui/layui.js"></script>
   <script type="text/javascript" src="/webjars/jquery/jquery.js"></script>
@@ -15,45 +16,22 @@
   <i class="layui-icon">&#xe67c;</i>上传图片
 </button>
 
-<button id="b">提交pojo</button>
-
-<button id="b1">提交requestParam</button>
-
-<button id="b2">提交requestParam对象</button>
-
-<button id="b3">交requestParam get</button>
-
-<button id="b4">path get</button>
-
-<button id="b5">path delete</button>
-
-<form action="/login" method="post">
-  <p>账号：<input type="text" name="username" value="neo"/></p>
-  <p>密码：<input type="password" name="password" value="neo"/></p>
-  <p><input type="submit" value="登录"/></p>
-</form>
-
-<div>
-  <img src="images/0.gif" alt="">
-  <img src="images/1.gif" alt="">
-</div>
-
 <script>
   $(function () {
 
     $("#b").click(function () {
-      var data = {
-        "title": "主题", "password": "123",
-        "like[0]": "girl", "like[1]": "swim",
-        "sw": 1,
-        "person.grade": "一年级", "person.clazz": "200班",
-        "animalList[0].age": "10", "animalList[0].color": "red",
-        "animalList[1].age": "26", "animalList[1].color": "blue"
-      };
+      <!--var data={"title":"主题","password":"123",-->
+      <!--"like[0]":"girl","like[1]":"swim",-->
+      <!--"sw":1,-->
+      <!--"person.grade":"一年级","person.clazz":"200班",-->
+      <!--"animalList[0].age":"10","animalList[0].color":"red",-->
+      <!--"animalList[1].age":"26","animalList[1].color":"blue"};-->
+
+      var data = {"loginName": "melo", "password": "123456"}
 
       var d = {"title": "主题"};
 
-      $.post("ff", data, function () {
+      $.post("login", data, function () {
 
       });
 
@@ -84,6 +62,7 @@
 
     });
     $("#b5").click(function () {
+
       $.ajax({
         url: 'cc/melo/26',
         type: 'POST',
@@ -91,8 +70,20 @@
         success: function (result) {
         }
       });
+
     });
   });
 </script>
+<button id="b">提交登录</button>
+
+<button id="b1">提交requestParam</button>
+
+<button id="b2">提交requestParam对象</button>
+
+<button id="b3">交requestParam get</button>
+
+<button id="b4">path get</button>
+
+<button id="b5">path delete</button>
 </body>
 </html>

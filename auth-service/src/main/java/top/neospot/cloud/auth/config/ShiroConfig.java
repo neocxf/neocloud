@@ -8,8 +8,8 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.handler.SimpleMappingExceptionResolver;
-import top.neospot.cloud.auth.authentication.MyFilter;
 import top.neospot.cloud.auth.authentication.CloudShiroRealm;
+import top.neospot.cloud.auth.authentication.MyFilter;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
@@ -17,9 +17,9 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- *  https://www.jianshu.com/p/504bfbbd5896
- *  https://www.jianshu.com/p/0b1131be7ace
- *  https://blog.csdn.net/baidu_33969289/article/details/86616058
+ * https://www.jianshu.com/p/504bfbbd5896
+ * https://www.jianshu.com/p/0b1131be7ace
+ * https://blog.csdn.net/baidu_33969289/article/details/86616058
  */
 @Configuration
 public class ShiroConfig {
@@ -30,12 +30,16 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         // 拦截器.
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<String, String>();
-
         // 配置不会被拦截的链接 顺序判断
-        filterChainDefinitionMap.put("/favicon.ico", "anon");
+        filterChainDefinitionMap.put("/**/**.html", "anon");
+        filterChainDefinitionMap.put("/**/**.ico", "anon");
+        filterChainDefinitionMap.put("/roles/**", "anon");
+        filterChainDefinitionMap.put("/regist", "anon");
+        filterChainDefinitionMap.put("/login", "anon");
+        filterChainDefinitionMap.put("/index.html", "anon");
         filterChainDefinitionMap.put("/home.html", "anon");
         filterChainDefinitionMap.put("/webjars/**", "anon");
-        filterChainDefinitionMap.put("/regist", "anon");
+        filterChainDefinitionMap.put("/images/**", "anon");
         filterChainDefinitionMap.put("/static/**", "anon");
         filterChainDefinitionMap.put("/h2-console/**", "anon");
         // 配置退出 过滤器,其中的具体的退出代码Shiro已经替我们实现了
@@ -47,7 +51,7 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setLoginUrl("/home.html");
         // 登录成功后要跳转的链接
 
-        shiroFilterFactoryBean.setSuccessUrl("/success");
+        shiroFilterFactoryBean.setSuccessUrl("/home.html");
 
         // 添加filter过滤
         LinkedHashMap<String, Filter> filters = new LinkedHashMap<>();
@@ -78,7 +82,6 @@ public class ShiroConfig {
     public CloudShiroRealm myShiroRealm() {
         CloudShiroRealm cloudShiroRealm = new CloudShiroRealm();
         cloudShiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
-        cloudShiroRealm.setAuthenticationCachingEnabled(true);
         return cloudShiroRealm;
     }
 

@@ -113,18 +113,19 @@ public class ShiroConfig {
     @Bean
     protected ShiroFilterChainDefinition shiroFilterChainDefinition() {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
-        chainDefinition.addPathDefinition("/welcome", "anon");
-        chainDefinition.addPathDefinition("/regist", "anon");
-        chainDefinition.addPathDefinition("/h2-console/**", "anon");
-        chainDefinition.addPathDefinition("/static/**", "anon");
-        chainDefinition.addPathDefinition("/login", "noSessionCreation,anon");
-        chainDefinition.addPathDefinition("/logout", "noSessionCreation,authcToken[permissive]");
-        chainDefinition.addPathDefinition("/image/**", "anon");
-        chainDefinition.addPathDefinition("/admin/**", "noSessionCreation,authcToken,anyRole[admin,manager]"); //只允许admin或manager角色的用户访问
-        chainDefinition.addPathDefinition("/users/**", "noSessionCreation,authcToken,anyRole"); //只允许admin或manager角色的用户访问
-        chainDefinition.addPathDefinition("/article/list", "noSessionCreation,authcToken");
-        chainDefinition.addPathDefinition("/article/*", "noSessionCreation,authcToken[permissive]");
-        chainDefinition.addPathDefinition("/**", "noSessionCreation,authcToken");
+        chainDefinition.addPathDefinition("/**", "anon");
+//        chainDefinition.addPathDefinition("/index.html", "anon");
+//        chainDefinition.addPathDefinition("/regist", "anon");
+//        chainDefinition.addPathDefinition("/h2-console/**", "anon");
+//        chainDefinition.addPathDefinition("/static/**", "anon");
+//        chainDefinition.addPathDefinition("/login", "noSessionCreation,anon");
+//        chainDefinition.addPathDefinition("/logout", "noSessionCreation,authcToken[permissive]");
+//        chainDefinition.addPathDefinition("/image/**", "anon");
+//        chainDefinition.addPathDefinition("/admin/**", "noSessionCreation,authcToken,anyRole[admin,manager]"); //只允许admin或manager角色的用户访问
+//        chainDefinition.addPathDefinition("/users/**", "noSessionCreation,authcToken,anyRole"); //只允许admin或manager角色的用户访问
+//        chainDefinition.addPathDefinition("/article/list", "noSessionCreation,authcToken");
+//        chainDefinition.addPathDefinition("/article/*", "noSessionCreation,authcToken[permissive]");
+//        chainDefinition.addPathDefinition("/**", "noSessionCreation,authcToken");
 
 
         return chainDefinition;

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import top.neospot.cloud.auth.entity.UserInfo;
 import top.neospot.cloud.auth.pojo.ResponseBo;
 import top.neospot.cloud.auth.service.UserInfoService;
-import top.neospot.cloud.auth.utils.MD5Utils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -25,22 +24,22 @@ public class HomeController {
     @RequestMapping("/success")
     @ResponseBody
     public ResponseBo success() {
-        Map<String,Object> result = new HashMap<>();
+        Map<String, Object> result = new HashMap<>();
         result.put("status", "OK");
         result.put("authenticated", "true");
         result.put("privileges", "all");
-        result.put("principal",  SecurityUtils.getSubject().getPrincipal());
+        result.put("principal", SecurityUtils.getSubject().getPrincipal());
 
         return ResponseBo.ok(result);
     }
 
-    @RequestMapping({"/","/index"})
-    public String index(){
-        return"/home.html";
+    @RequestMapping({"/", "/index"})
+    public String index() {
+        return "/home.html";
     }
 
     @RequestMapping("/login")
-    public String login(HttpServletRequest request, Map<String, Object> map) throws Exception{
+    public String login(HttpServletRequest request, Map<String, Object> map) throws Exception {
         System.out.println("HomeController.login()");
         // 登录失败从request中获取shiro处理的异常信息。
         // shiroLoginFailure:就是shiro异常类的全类名.
@@ -58,37 +57,37 @@ public class HomeController {
                 System.out.println("kaptchaValidateFailed -- > 验证码错误");
                 msg = "kaptchaValidateFailed -- > 验证码错误";
             } else {
-                msg = "else >> "+exception;
+                msg = "else >> " + exception;
                 System.out.println("else -- >" + exception);
             }
         }
         map.put("msg", msg);
         // 此方法不处理登录成功,由shiro进行处理
-        return "/login";
+        return "/home.html";
     }
 
-	@PostMapping("/login")
-	@ResponseBody
-	public ResponseBo login(String username, String password, boolean rememberMe) {
-		UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
-		Subject subject = SecurityUtils.getSubject();
-		try {
-			subject.login(token);
-			return ResponseBo.ok();
-		} catch (UnknownAccountException | IncorrectCredentialsException | LockedAccountException e) {
+    @PostMapping("/login")
+    @ResponseBody
+    public ResponseBo login(String username, String password, boolean rememberMe) {
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
+        Subject subject = SecurityUtils.getSubject();
+        try {
+            subject.login(token);
+            return ResponseBo.ok();
+        } catch (UnknownAccountException | IncorrectCredentialsException | LockedAccountException e) {
             System.out.println(subject.isAuthenticated());
             System.out.println(subject.getPrincipal());
             System.out.println(subject.getPreviousPrincipals());
             System.out.println(subject.getPrincipals());
-			return ResponseBo.error(e.getMessage());
-		} catch (AuthenticationException e) {
-			return ResponseBo.error("认证失败！");
-		}
+            return ResponseBo.error(e.getMessage());
+        } catch (AuthenticationException e) {
+            return ResponseBo.error("认证失败！");
+        }
 
 
-	}
+    }
 
-	@PostMapping("/regist")
+    @PostMapping("/regist")
     @ResponseBody
     public ResponseBo regist(String username, String password) {
         UserInfo regist = null;
@@ -103,7 +102,7 @@ public class HomeController {
     }
 
     @RequestMapping("/403")
-    public String unauthorizedRole(){
+    public String unauthorizedRole() {
         System.out.println("------没有权限-------");
         return "403";
     }
