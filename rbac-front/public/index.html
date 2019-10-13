@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!--让a标签打开新页面 -->
+  <base target="_blank"/>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+  <title>Focus Cloud</title>
+  <link rel="stylesheet" href="/lib/layui/css/layui.css"/>
+  <script type="text/javascript" src="/lib/layui/layui.js"></script>
+  <script type="text/javascript" src="/lib/jquery-3.4.1.min.js"></script>
+</head>
+<body background="images/1.jpg" style="background-size:100%">
+<script>
+  layui.use(['element', 'layer'], function () {
+    var element = layui.element;
+
+    //请求首页模块资源
+    $.get("http://localhost:9007/base/baseResource/indexResource", {}, function (result) {
+      if (result.status === 500) {
+        layer.msg(result.data, {icon: 5}, {time: 1500})
+      } else if (result.status === 200) {
+        showMenum(result.data);
+      } else if (result.status === 502) {
+        window.location.href = "http://localhost:4000/home.html";
+      }
+    });
+
+    function showMenum(data) {
+      $.each(data, function (i, j) {
+        $("#menu").append("<li class='layui-nav-item'> <a href='" + j['menuRoute'] + "'>" + j['name'] + "</a></li>");
+      });
+
+    }
+
+    $("#loginOut").click(function () {
+      $.get("http://localhost:4000/loginout", {}, function (result) {
+        if (result.status === 500) {
+          layer.msg(result.data, {icon: 5}, {time: 1500})
+        } else if (result.status === 200) {
+          window.location.href = "http://localhost:4000/user.html";
+        } else if (result.status === 502) {
+          window.location.href = "http://localhost:4000/loginpage";
+        }
+      });
+    });
+  });
+</script>
+<ul class="layui-nav layui-bg-black" id="menu">
+  <fieldset class="layui-elem-field layui-field-title" style="margin:0;height:50px;margin-bottom:-26px">
+    <legend>Focus Cloud</legend>
+  </fieldset>
+
+  <li class="layui-nav-item">
+    <a href="">用户管理</a>
+  </li>
+  <li class="layui-nav-item">
+    <a href="">权限管理</a>
+  </li>
+  <li class="layui-nav-item">
+    <a href="">部门管理</a>
+  </li>
+  <li class="layui-nav-item">
+    <a href="">通知</a>
+  </li>
+  <li class="layui-nav-item">
+    <a href="">财务管理<span class="layui-badge-dot"></span></a>
+  </li>
+  <li class="layui-nav-item" style="float:right">
+    <a href=""><img src="//t.cn/RCzsdCq" class="layui-nav-img" alt="">我</a>
+    <dl class="layui-nav-child">
+      <dd><a href="javascript:">修改信息</a></dd>
+      <dd><a href="javascript:" id="loginOut">退出</a></dd>
+    </dl>
+  </li>
+</ul>
+
+
+<div class="layui-row">
+  <div class="layui-col-md5 layui-bg-gray">
+    focucloud
+  </div>
+  <div class="layui-col-md5 layui-col-md-offset2 layui-bg-gray">
+    偏移4列，从而在最右
+  </div>
+</div>
+</body>
+</html>

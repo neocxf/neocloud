@@ -30,3 +30,8 @@ logs/
 workdir/
 
 *.iml
+node_modules/
+package-lock.json
+yarn.lock
+*.sqlite
+

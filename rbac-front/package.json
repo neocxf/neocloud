@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "connect-history-api-fallback": "1.5.0",
+    "express": "4.16.4",
+    "md5": "^2.2.1",
+    "sqlite3": "^4.1.0"
+  },
+  "name": "@neocxf/billing-201812",
+  "version": "1.0.0",
+  "description": "manage record in and out",
+  "main": "index.js",
+  "devDependencies": {
+    "forever": "0.15.3",
+    "nodemon": "^1.18.7"
+  },
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "forever start index.js",
+    "list": "forever list",
+    "stop": "forever stop index.js",
+    "restart": "forever restart index.js"
+  },
+  "keywords": [
+    "billing"
+  ],
+  "author": "neocxf@gmail.com",
+  "license": "MIT"
+}
