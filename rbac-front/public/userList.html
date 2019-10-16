@@ -124,10 +124,8 @@
     }
 
     function delUser(data) {
-      var d = "";
-      $.each(data, function (i, j) {
-        d = d + j["id"] + ",";
-      });
+      var d = data.map(el => el['id']).join(',');
+
       $.ajax({
         url: '/api/users/' + d,
         type: 'POST',

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import top.neospot.cloud.inventory.entity.InventoryItem;
 import top.neospot.cloud.inventory.model.ProductInventory;
 import top.neospot.cloud.inventory.request.ProductInventoryUpdateRequest;
+import top.neospot.cloud.inventory.service.CacheService;
 import top.neospot.cloud.inventory.service.InventoryItemService;
 import top.neospot.cloud.inventory.thread.RequestProcessorThreadPool;
 
@@ -35,6 +36,9 @@ public class InventoryController {
 
     @Autowired
     private InventoryItemService inventoryItemService;
+
+    @Autowired
+    private CacheService cacheService;
 
     private ReentrantReadWriteLock.WriteLock lock = new ReentrantReadWriteLock().writeLock();
 
