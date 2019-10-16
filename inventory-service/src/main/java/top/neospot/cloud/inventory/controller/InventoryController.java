@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import top.neospot.cloud.inventory.entity.InventoryItem;
-import top.neospot.cloud.inventory.model.ProductInventory;
+import top.neospot.cloud.inventory.model.ProductInventoryDemand;
 import top.neospot.cloud.inventory.request.ProductInventoryUpdateRequest;
 import top.neospot.cloud.inventory.service.CacheService;
 import top.neospot.cloud.inventory.service.InventoryItemService;
@@ -47,49 +47,90 @@ public class InventoryController {
     100 thread, run 10 cycles, throughput: 50+/s
    */
     @PostMapping("/minusInventoryByOptLock")
-    public ResponseEntity<ProductInventory> minusInventoryByOptLock(@RequestBody ProductInventory productInventory, HttpServletRequest servletRequest) throws Exception {
+    public ResponseEntity<ProductInventoryDemand> minusInventoryByOptLock(@RequestBody ProductInventoryDemand productInventoryDemand, HttpServletRequest servletRequest) throws Exception {
 
-        log.info("minusInventory: {}", productInventory);
+        log.info("minusInventory: {}", productInventoryDemand);
 
         try {
-            inventoryItemService.minusInventory(productInventory);
+            inventoryItemService.minusInventory(productInventoryDemand);
 
         } catch (Exception ex) {
             // do nothing
         } finally {
         }
 
-        return ResponseEntity.ok(productInventory);
+        return ResponseEntity.ok(productInventoryDemand);
     }
 
     /*
+    分段lock增加throughput minusInventoryByZKLockConcurrent
+
     100 thread, run 10 cycles, throughput: 20/s
      */
-    @PostMapping("/minusInventoryByZKLock")
-    public ResponseEntity<ProductInventory> minusInventoryByZKLock(@RequestBody ProductInventory productInventory, HttpServletRequest servletRequest) throws Exception {
+    @PostMapping("/minusInventoryByZKLockConcurrent")
+    public ResponseEntity<ProductInventoryDemand> minusInventoryByZKLockConcurrent(@RequestBody ProductInventoryDemand productInventoryDemand, HttpServletRequest servletRequest) throws Exception {
+        InterProcessSemaphoreMutex interProcessSemaphoreMutex = null;
 
-        InterProcessSemaphoreMutex interProcessSemaphoreMutex = new InterProcessSemaphoreMutex(curatorFramework, "/inventory-cnt-" + productInventory.getProductCode());
+        Integer index = cacheService.lockInventoryItem(productInventoryDemand.getProductCode(), productInventoryDemand.getProductCnt());
+        String lockPath = String.format("/inventory-cnt-%s-%d", productInventoryDemand.getProductCode(), index);
+
+        try {
+            interProcessSemaphoreMutex = new InterProcessSemaphoreMutex(curatorFramework, lockPath);
+
+            interProcessSemaphoreMutex.acquire();
+
+            log.info("minusInventory: {}", productInventoryDemand);
+
+            inventoryItemService.minusInventory(productInventoryDemand);
+
+        } finally {
+            assert interProcessSemaphoreMutex != null;
+
+            interProcessSemaphoreMutex.release();
+
+            boolean unlockSuccess = cacheService.unlockInventoryItem(productInventoryDemand.getProductCode(), index);
+
+            if (unlockSuccess) {
+                log.info("unlock success for: {} ", lockPath);
+            } else {
+                log.info("unlock failed for: {} ", lockPath);
+            }
+        }
+
+        return ResponseEntity.ok(productInventoryDemand);
+    }
+
+    /*
+    minusInventoryByZKLock
+   100 thread, run 10 cycles, throughput: 20/s
+    */
+    @PostMapping("/minusInventoryByZKLock")
+    public ResponseEntity<ProductInventoryDemand> minusInventoryByZKLock(@RequestBody ProductInventoryDemand
+                                                                             productInventoryDemand, HttpServletRequest servletRequest) throws Exception {
+
+        InterProcessSemaphoreMutex interProcessSemaphoreMutex = new InterProcessSemaphoreMutex(curatorFramework, "/inventory-cnt-" + productInventoryDemand.getProductCode());
         interProcessSemaphoreMutex.acquire();
 
-        log.info("minusInventory: {}", productInventory);
+        log.info("minusInventory: {}", productInventoryDemand);
 
-        inventoryItemService.minusInventory(productInventory);
+        inventoryItemService.minusInventory(productInventoryDemand);
 
         interProcessSemaphoreMutex.release();
 
-        return ResponseEntity.ok(productInventory);
+        return ResponseEntity.ok(productInventoryDemand);
     }
 
     /*
     100 thread, run 10 cycles, throughput: 20/s
      */
     @PostMapping("/minusInventoryByQueue")
-    public void minusInventoryByQueue(@RequestBody ProductInventory productInventory, HttpServletRequest servletRequest) throws Exception {
+    public void minusInventoryByQueue(@RequestBody ProductInventoryDemand productInventoryDemand, HttpServletRequest
+        servletRequest) throws Exception {
 //        InterProcessSemaphoreMutex interProcessSemaphoreMutex = new InterProcessSemaphoreMutex(curatorFramework, "/inventory-cnt-" + productInventory.getProductCode());
 //        interProcessSemaphoreMutex.acquire();
 
-        RequestProcessorThreadPool processorThreadPool = (RequestProcessorThreadPool)servletRequest.getServletContext().getAttribute(RequestProcessorThreadPool.class.getName());
-        processorThreadPool.dispatch(new ProductInventoryUpdateRequest(inventoryItemService, productInventory));
+        RequestProcessorThreadPool processorThreadPool = (RequestProcessorThreadPool) servletRequest.getServletContext().getAttribute(RequestProcessorThreadPool.class.getName());
+        processorThreadPool.dispatch(new ProductInventoryUpdateRequest(inventoryItemService, productInventoryDemand));
         id.incrementAndGet();
         System.out.println("recv-request:" + id.longValue());
 
@@ -97,7 +138,8 @@ public class InventoryController {
     }
 
     @PostMapping("/updateInventorySync")
-    public void updateInventorySync(@RequestBody ProductInventory productInventory, HttpServletRequest servletRequest) {
+    public void updateInventorySync(@RequestBody ProductInventoryDemand productInventoryDemand, HttpServletRequest
+        servletRequest) {
 
         try {
             Thread.sleep(100);
@@ -108,7 +150,7 @@ public class InventoryController {
 
     @GetMapping("/getProductInfo")
     public ProductInfo getProductInfo(long productId) {
-        return ProductInfo.builder().id(productId).color("red").name("product" + productId).price(productId * 10).service("service" + productId).size(String.valueOf(productId*0.5)).build();
+        return ProductInfo.builder().id(productId).color("red").name("product" + productId).price(productId * 10).service("service" + productId).size(String.valueOf(productId * 0.5)).build();
     }
 
     @GetMapping("/getShopInfo")
@@ -120,7 +162,7 @@ public class InventoryController {
     @GetMapping("/api/inventory/{productCode}")
     @HystrixCommand
     public ResponseEntity<InventoryItem> findInventoryByProductCode(@PathVariable("productCode") String productCode) {
-        log.info("Finding inventory for product code :"+productCode);
+        log.info("Finding inventory for product code :" + productCode);
         InventoryItem inventoryItem = inventoryItemService.getOne(Wrappers.<InventoryItem>lambdaQuery().eq(InventoryItem::getProductCode, productCode));
 
         return Optional.ofNullable(inventoryItem).map(item -> new ResponseEntity<>(item, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
