@@ -20,3 +20,12 @@
 1. docker ram size according to the [equation](https://github.com/dsyer/spring-boot-memory-blog/blob/master/cf.md)
 
 2. spring-cloud docker-compose structure refer from [resource](https://github.com/sqshq/PiggyMetrics)
+
+## TODO task
+
+1. write a rule to load-balance the user's deduce inventory request to separate servers.
+    > Hint: try using client load-balancing such as ribbon to resolve this : https://howtodoinjava.com/spring-cloud/spring-boot-ribbon-eureka/
+    
+    > Run ```mvn spring-boot:run -Dspring-boot.run.arguments=--server.port=8099```                                                                                                                                                                              
+2.                                                                                            
+                                                                                          

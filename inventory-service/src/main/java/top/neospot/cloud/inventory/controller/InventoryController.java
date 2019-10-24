@@ -5,6 +5,8 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessSemaphoreMutex;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * By neo.chen{neocxf@gmail.com} on 2019/5/23.
@@ -35,16 +37,16 @@ public class InventoryController {
     CuratorFramework curatorFramework;
 
     @Autowired
+    RedissonClient redissonClient;
+
+    @Autowired
     private InventoryItemService inventoryItemService;
 
     @Autowired
     private CacheService cacheService;
 
-    private ReentrantReadWriteLock.WriteLock lock = new ReentrantReadWriteLock().writeLock();
-
-
     /*
-    100 thread, run 10 cycles, throughput: 50+/s
+    100 thread, run 10 cycles, throughput: 150+/s
    */
     @PostMapping("/minusInventoryByOptLock")
     public ResponseEntity<ProductInventoryDemand> minusInventoryByOptLock(@RequestBody ProductInventoryDemand productInventoryDemand, HttpServletRequest servletRequest) throws Exception {
@@ -65,7 +67,7 @@ public class InventoryController {
     /*
     分段lock增加throughput minusInventoryByZKLockConcurrent
 
-    100 thread, run 10 cycles, throughput: 20/s
+    100 thread, run 10 cycles, throughput: 65+/s
      */
     @PostMapping("/minusInventoryByZKLockConcurrent")
     public ResponseEntity<ProductInventoryDemand> minusInventoryByZKLockConcurrent(@RequestBody ProductInventoryDemand productInventoryDemand, HttpServletRequest servletRequest) throws Exception {
@@ -102,7 +104,7 @@ public class InventoryController {
 
     /*
     minusInventoryByZKLock
-   100 thread, run 10 cycles, throughput: 20/s
+   100 thread, run 10 cycles, throughput: 40+/s
     */
     @PostMapping("/minusInventoryByZKLock")
     public ResponseEntity<ProductInventoryDemand> minusInventoryByZKLock(@RequestBody ProductInventoryDemand
@@ -121,7 +123,73 @@ public class InventoryController {
     }
 
     /*
-    100 thread, run 10 cycles, throughput: 20/s
+     minusInventoryByRedis
+    100 thread, run 10 cycles, throughput: 50+/s
+     */
+    @PostMapping(value = "/minusInventoryByRedis")
+    public ResponseEntity<ProductInventoryDemand> minusInventoryByRedis(@RequestBody ProductInventoryDemand productInventoryDemand) {
+        RLock lock = redissonClient.getLock("/inventory-cnt-" + productInventoryDemand.getProductCode());
+        try {
+            for (;;) {
+                boolean bs = lock.tryLock(1, 5, TimeUnit.SECONDS);
+                if (bs) {
+                    // 业务代码
+                    log.info("minusInventory: {}", productInventoryDemand);
+                    inventoryItemService.minusInventory(productInventoryDemand);
+
+                    return ResponseEntity.ok(productInventoryDemand);
+
+                } else {
+                    Thread.sleep(10);
+                }
+            }
+
+        } catch (Exception e) {
+            log.error(e.getLocalizedMessage());
+        } finally {
+            lock.unlock();
+        }
+
+        return ResponseEntity.badRequest().body(null);
+    }
+
+    /*
+     minusInventoryByRedisMulti
+    100 thread, run 10 cycles, throughput: 96+/s
+     */
+    @PostMapping(value = "/minusInventoryByRedisMulti")
+    public ResponseEntity<ProductInventoryDemand> minusInventoryByRedisMulti(@RequestBody ProductInventoryDemand productInventoryDemand) {
+        Integer index = cacheService.lockInventoryItem(productInventoryDemand.getProductCode(), productInventoryDemand.getProductCnt());
+        String lockPath = String.format("/inventory-cnt-%s-%d", productInventoryDemand.getProductCode(), index);
+
+        RLock lock = redissonClient.getLock(lockPath);
+        try {
+            for (;;) {
+                boolean bs = lock.tryLock(1, 5, TimeUnit.SECONDS);
+                if (bs) {
+                    // 业务代码
+                    log.info("minusInventory: {}", productInventoryDemand);
+                    inventoryItemService.minusInventory(productInventoryDemand);
+
+                    return ResponseEntity.ok(productInventoryDemand);
+
+                } else {
+                    Thread.sleep(10);
+                }
+            }
+
+        } catch (Exception e) {
+            log.error(e.getLocalizedMessage());
+        } finally {
+            lock.unlock();
+            cacheService.unlockInventoryItem(productInventoryDemand.getProductCode(), index);
+        }
+
+        return ResponseEntity.badRequest().body(null);
+    }
+
+    /*
+    100 thread, run 10 cycles, throughput: 200/s
      */
     @PostMapping("/minusInventoryByQueue")
     public void minusInventoryByQueue(@RequestBody ProductInventoryDemand productInventoryDemand, HttpServletRequest

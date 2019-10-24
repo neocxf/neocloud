@@ -12,7 +12,7 @@ import top.neospot.cloud.messaging.model.DeductReward;
 @FeignClient(value = "reward-service", fallback = RewardServiceClientFallback.class)
 public interface RewardServiceClient {
     @RequestMapping(value = "/deductReward",method = RequestMethod.POST)
-    public void tryDeductReward(@RequestBody DeductReward deductReward) throws Exception;
+    void tryDeductReward(@RequestBody DeductReward deductReward) throws Exception;
 
 
 }

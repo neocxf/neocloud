@@ -44,10 +44,19 @@ public class CacheService implements InitializingBean {
             slotItems.add(slotItem);
         }
 
+        List<SlotItem> items = productInventoryCache.get(inventoryItem.getProductCode());
+
+        if (items != null) {
+            int totalRemaining = items.stream().map(SlotItem::actualPayable).reduce(0, Integer::sum);
+            if (totalRemaining < total)
+                productInventoryCache.put(inventoryItem.getProductCode(), slotItems);
+            return;
+        }
+
         productInventoryCache.putIfAbsent(inventoryItem.getProductCode(), slotItems);
     }
 
-    @Scheduled(cron = "0 0/1 * * * ? ")
+    @Scheduled(cron = "0 0/3 * * * ? ")
     void syncFromDb() {
         List<InventoryItem> inventoryItems = inventoryItemService.list();
         inventoryItems.forEach(this::trySplitAndReloadCache);
