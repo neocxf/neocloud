@@ -179,6 +179,12 @@
                 <artifactId>sharding-jdbc-spring-boot-starter</artifactId>
                 <version>${shardingsphere.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.thoughtworks.xstream</groupId>
+                <artifactId>xstream</artifactId>
+                <version>[1.4.11,)</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
