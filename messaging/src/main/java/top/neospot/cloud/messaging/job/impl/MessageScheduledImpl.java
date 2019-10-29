@@ -81,8 +81,8 @@ public class MessageScheduledImpl implements MessageScheduled, InitializingBean,
         waitingConfirmTimer = new Timer(true);
         sendingTimeoutTimer = new Timer(true);
 
-//        handleSendingTimeOutMessage();
-//        handleWaitingConfirmTimeOutMessages();
+        handleSendingTimeOutMessage();
+        handleWaitingConfirmTimeOutMessages();
     }
 
 

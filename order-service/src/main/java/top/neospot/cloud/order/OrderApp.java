@@ -22,9 +22,9 @@ import top.neospot.cloud.common.BaseCloud;
 @EnableFeignClients
 @EnableSwagger2
 @MapperScan("top.neospot.cloud.order.mapper")
-public class OrderEndpoint extends BaseCloud {
+public class OrderApp extends BaseCloud {
     public static void main(String[] args) {
-        SpringApplication.run(OrderEndpoint.class, args);
+        SpringApplication.run(OrderApp.class, args);
     }
 
     @Bean

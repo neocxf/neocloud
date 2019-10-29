@@ -11,7 +11,8 @@ create table if not exists `t_order` (
     deleted bit(1) default 0,
     version int default 0,
     create_time datetime,
-    last_update_time datetime
+    last_update_time datetime,
+    field1 text
 );
 
 DROP TABLE IF EXISTS `dictionary`;

@@ -26,7 +26,7 @@ public class ShippingOrderTest extends ShippingAppTest {
         ShippingOrder user = shippingMapper.selectOne(queryWrapper);
 
         if (user == null) {
-            user = new ShippingOrder().setRewardExchangeId(1L).setType("reward").setNumber(1L).setProductId(1L).setAddr("pudong");
+            user = new ShippingOrder().setRewardExchangeId(1L).setType((short) 1).setNumber(1L).setProductId(1L).setAddr("pudong");
             shippingMapper.insert(user);
         }
 

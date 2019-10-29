@@ -15,12 +15,14 @@ import top.neospot.cloud.common.model.BaseModel;
 @Accessors(chain = true)
 @TableName("shipping_order")
 public class ShippingOrder extends BaseModel {
-    private String type;
+    private Short type;
     private Long orderId;
     private Long productId;
     private Long rewardExchangeId;
     private Long  number;
     private String addr;
+    private Boolean shipped;
+    private Boolean orderConfirmed;
     @Override
     public String toString() {
         return JSONObject.toJSONString(this);

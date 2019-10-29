@@ -20,8 +20,10 @@ java_opts="
 
 PROGRAM_NAME=eureka-registry
 
-cd ../$PROGRAM_NAME
+# cd ../$PROGRAM_NAME
 
-mvn clean package -DskipTests
+# mvn clean package -DskipTests
 
-java -jar $java_opts target/${PROGRAM_NAME}.jar
+# java -jar $java_opts target/${PROGRAM_NAME}.jar
+
+mvn -D$java_opts  --projects $PROGRAM_NAME spring-boot:run

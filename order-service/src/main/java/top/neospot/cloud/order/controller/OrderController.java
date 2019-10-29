@@ -3,9 +3,9 @@ package top.neospot.cloud.order.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.recipes.locks.InterProcessSemaphoreMutex;
 import org.apache.dubbo.config.annotation.Reference;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.neospot.cloud.common.constants.ENV;
@@ -19,6 +19,7 @@ import top.neospot.cloud.order.mapper.OrderEntityMapper;
 import top.neospot.cloud.order.remote.RewardServiceClient;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @Slf4j
@@ -31,7 +32,7 @@ public class OrderController {
     RewardServiceClient rewardServiceClient;
 
     @Autowired
-    CuratorFramework curatorFramework;
+    RedissonClient redissonClient;
 
     @Reference
     private RpTransactionMessageService rpTransactionMessageService;
@@ -44,7 +45,7 @@ public class OrderController {
     }
 
     @PutMapping("/orders/{orderId}")
-    public void confirmDelivery(@PathVariable("orderId") Long orderId){
+    public boolean confirmDelivery(@PathVariable("orderId") Long orderId){
         OrderEntity orderEntity = orderEntityMapper.selectById(orderId);
         String messageId = orderEntity.getLastMessageId();
 
@@ -54,6 +55,8 @@ public class OrderController {
         orderEntityMapper.updateById(orderEntity);
 
         log.info("order[{}] has been shipped", orderId);
+
+        return true;
     }
 
     /**
@@ -61,13 +64,16 @@ public class OrderController {
      */
     @PostMapping("/orders/pay/{orderId}")
     public void payOrderByReward(@PathVariable(value = "orderId") Long orderId) throws Exception {
+
         OrderEntity orderEntity = orderEntityMapper.selectOne(Wrappers.<OrderEntity>lambdaQuery().eq(OrderEntity::getId, orderId).eq(OrderEntity::getStatus, "未支付"));
 
         if (orderEntity == null) return;
 
-        InterProcessSemaphoreMutex interProcessSemaphoreMutex = new InterProcessSemaphoreMutex(curatorFramework, "/order-pay-" + orderId);
+        RLock lock = redissonClient.getLock("/order-pay-" + orderId);
 
-        interProcessSemaphoreMutex.acquire();
+        boolean successGainedLock = lock.tryLock(1, 5, TimeUnit.SECONDS);
+
+        if (! successGainedLock) return;
 
         DeductReward deductReward = new DeductReward();
         deductReward.setCredit((long) (orderEntity.getPrice() * orderEntity.getNumber()));
@@ -76,6 +82,8 @@ public class OrderController {
         deductReward.setOrderId(orderEntity.getId());
         deductReward.setNumber(orderEntity.getNumber());
 
+        String deductRewardJson = JSONObject.toJSONString(deductReward);
+
         log.info("trying to pay the order[{}] with reward0", orderId);
 
         // 尝试扣除积分，将该逻辑发送到可靠消息部分
@@ -83,7 +91,7 @@ public class OrderController {
         message.setMessageId(UUIDUtil.messageId());
         message.setMessageDateType("json");
         message.setConsumerQueue(ENV.REWARD_QUEUE);
-        message.setMessageBody(JSONObject.toJSONString(deductReward));
+        message.setMessageBody(deductRewardJson);
 
         orderEntity.setLastMessageId(message.getMessageId());
         orderEntityMapper.updateById(orderEntity);
@@ -105,11 +113,12 @@ public class OrderController {
         // 检查扣分逻辑是否成功，若成功，则真实发送消息给shipping 端发货
 
         orderEntity.setStatus("支付成功");
+        orderEntity.setField1(deductRewardJson);
 
         log.info("the order[{}] pay success, waiting for shipping", orderId);
         orderEntityMapper.update(orderEntity, Wrappers.<OrderEntity>lambdaUpdate().eq(OrderEntity::getLastMessageId, orderEntity.getLastMessageId()));
 
-        interProcessSemaphoreMutex.release();
+        lock.unlock();
     }
 
     @PostMapping("/orders")

@@ -1,9 +1,9 @@
 package top.neospot.cloud.messaging.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +25,7 @@ import java.util.Date;
  */
 @Service
 @Slf4j
-public class RpTransactionMessageServiceImpl implements RpTransactionMessageService {
-    @Autowired
-    private MessageMapper messageMapper;
+public class RpTransactionMessageServiceImpl  extends ServiceImpl<MessageMapper, Message> implements RpTransactionMessageService {
 
     @Autowired
     private JmsTemplate jmsTemplate;
@@ -45,21 +43,33 @@ public class RpTransactionMessageServiceImpl implements RpTransactionMessageServ
 
     @Override
     @Transactional
-    public int saveMessageWaitingConfirm(Message message) {
+    public boolean saveMessageWaitingConfirm(Message message) {
         log.debug("saving WAITING_CONFIRM message: {}", message);
+
         message.setStatus("WAITING_CONFIRM");
-        return messageMapper.insert(message);
+
+        Message persistedMessage = getOne(Wrappers.<Message>lambdaQuery().eq(Message::getMessageId, message.getMessageId()));
+
+        if (persistedMessage != null) {
+            message.setId(persistedMessage.getId());
+            message.setDeleted(0);
+            return updateById(message);
+        }
+
+        return save(message);
     }
 
     @Override
     @Transactional
     public void confirmAndSendMessage(String messageId) {
-        Message message = messageMapper.selectOne(Wrappers.<Message>lambdaQuery().eq(Message::getMessageId, messageId));
+
+        Message message = getOne(Wrappers.<Message>lambdaQuery().eq(Message::getMessageId, messageId));
 
         if (message == null) return;
 
         message.setStatus("SENDING");
-        messageMapper.updateById(message);
+
+        updateById(message);
 
         log.debug("confirm, and sending message: {}", message);
 
@@ -69,10 +79,10 @@ public class RpTransactionMessageServiceImpl implements RpTransactionMessageServ
 
     @Override
     @Transactional
-    public int saveAndSendMessage(Message message) {
+    public boolean saveAndSendMessage(Message message) {
         message.setStatus("SENDING");
         message.setMessageSendTimes(0);
-        int result = messageMapper.insert(message);
+        boolean result = save(message);
 
         jmsTemplate.convertAndSend(message.getConsumerQueue(), message);
 
@@ -90,7 +100,7 @@ public class RpTransactionMessageServiceImpl implements RpTransactionMessageServ
     public void reSendMessage(Message message) {
         message.incrementTimes();
         message.setEditTime(new Date());
-        messageMapper.updateById(message);
+        updateById(message);
         jmsTemplate.convertAndSend(message.getConsumerQueue(), message);
     }
 
@@ -109,7 +119,7 @@ public class RpTransactionMessageServiceImpl implements RpTransactionMessageServ
 
     private void setMessageToAlreadyDead(Message message) {
         message.setAlreadyDead(true);
-        messageMapper.updateById(message);
+        updateById(message);
     }
 
     @Override
@@ -121,13 +131,13 @@ public class RpTransactionMessageServiceImpl implements RpTransactionMessageServ
 
     @Override
     public Message getMessageByMessageId(String messageId) {
-        return messageMapper.selectOne(Wrappers.<Message>lambdaQuery().eq(Message::getMessageId, messageId));
+        return getOne(Wrappers.<Message>lambdaQuery().eq(Message::getMessageId, messageId));
     }
 
     @Override
     @Transactional
     public void deleteMessageByMessageId(String messageId) {
-        messageMapper.delete(Wrappers.<Message>lambdaQuery().eq(Message::getMessageId, messageId));
+        remove(Wrappers.<Message>lambdaQuery().eq(Message::getMessageId, messageId));
     }
 
     @Override
@@ -135,14 +145,10 @@ public class RpTransactionMessageServiceImpl implements RpTransactionMessageServ
     public void reSendAllDeadMessageByQueueName(String queueName, int batchSize) {
         Page<Message> page = new Page<>(1, batchSize);
 
-        IPage<Message> messageIPage = messageMapper.selectPage(page, Wrappers.<Message>lambdaQuery().eq(Message::getAlreadyDead, true).eq(Message::getConsumerQueue, queueName).orderByAsc(Message::getId));
+        IPage<Message> messageIPage = page(page, Wrappers.<Message>lambdaQuery().eq(Message::getAlreadyDead, true).eq(Message::getConsumerQueue, queueName).orderByAsc(Message::getId));
 
         messageIPage.getRecords().forEach(this::directSendMessage);
     }
 
-    @Override
-    public IPage<Message> listPage(Page<Message> page, QueryWrapper<Message> queryWrapper) {
-        return messageMapper.selectPage(page, queryWrapper);
-    }
 
 }

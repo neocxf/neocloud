@@ -33,4 +33,9 @@ public class OrderEntity extends BaseModel {
      * 3. 已发货
      */
     private String status;
+
+    /**
+     * save the deduct logic for backup
+     */
+    private String field1;
 }

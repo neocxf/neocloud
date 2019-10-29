@@ -10,7 +10,7 @@ import top.neospot.cloud.messaging.model.DeductReward;
 @FeignClient(value = "order-service")
 public interface OrderServiceClient {
     @RequestMapping(value = "/orders/{orderId}",method = RequestMethod.PUT)
-    public void confirmShipping(@PathVariable("orderId") Long orderId);
+    public boolean confirmShipping(@PathVariable("orderId") Long orderId);
 
 
 }

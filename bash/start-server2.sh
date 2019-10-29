@@ -1,0 +1,1 @@
+java -jar -Dserver.port=9092  ribbon-server/target/ribbon-server*.jar
