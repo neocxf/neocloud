@@ -17,6 +17,7 @@ import top.neospot.cloud.order.dto.NewOrderDto;
 import top.neospot.cloud.order.entity.OrderEntity;
 import top.neospot.cloud.order.mapper.OrderEntityMapper;
 import top.neospot.cloud.order.remote.RewardServiceClient;
+import top.neospot.cloud.order.service.OrderEntityService;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class OrderController {
 
     @Autowired
-    OrderEntityMapper orderEntityMapper;
+    OrderEntityService orderEntityService;
 
     @Autowired
     RewardServiceClient rewardServiceClient;
@@ -39,20 +40,21 @@ public class OrderController {
 
     @GetMapping("/orders")
     public List<OrderEntity> getAllOrders() {
-
-        return orderEntityMapper.selectList(null);
-
+        System.out.println("hello orders get method");
+        return orderEntityService.list();
     }
 
     @PutMapping("/orders/{orderId}")
     public boolean confirmDelivery(@PathVariable("orderId") Long orderId){
-        OrderEntity orderEntity = orderEntityMapper.selectById(orderId);
+        log.info("confirm the delivery of order: {}", orderId);
+
+        OrderEntity orderEntity = orderEntityService.getById(orderId);
         String messageId = orderEntity.getLastMessageId();
 
         rpTransactionMessageService.deleteMessageByMessageId(messageId);
 
         orderEntity.setStatus("已发货").setLastMessageId(null);
-        orderEntityMapper.updateById(orderEntity);
+        orderEntityService.updateById(orderEntity);
 
         log.info("order[{}] has been shipped", orderId);
 
@@ -65,7 +67,7 @@ public class OrderController {
     @PostMapping("/orders/pay/{orderId}")
     public void payOrderByReward(@PathVariable(value = "orderId") Long orderId) throws Exception {
 
-        OrderEntity orderEntity = orderEntityMapper.selectOne(Wrappers.<OrderEntity>lambdaQuery().eq(OrderEntity::getId, orderId).eq(OrderEntity::getStatus, "未支付"));
+        OrderEntity orderEntity = orderEntityService.getOne(Wrappers.<OrderEntity>lambdaQuery().eq(OrderEntity::getId, orderId).eq(OrderEntity::getStatus, "未支付"));
 
         if (orderEntity == null) return;
 
@@ -94,7 +96,7 @@ public class OrderController {
         message.setMessageBody(deductRewardJson);
 
         orderEntity.setLastMessageId(message.getMessageId());
-        orderEntityMapper.updateById(orderEntity);
+        orderEntityService.updateById(orderEntity);
 
         deductReward.setMessageId(message.getMessageId());
 
@@ -116,7 +118,7 @@ public class OrderController {
         orderEntity.setField1(deductRewardJson);
 
         log.info("the order[{}] pay success, waiting for shipping", orderId);
-        orderEntityMapper.update(orderEntity, Wrappers.<OrderEntity>lambdaUpdate().eq(OrderEntity::getLastMessageId, orderEntity.getLastMessageId()));
+        orderEntityService.update(orderEntity, Wrappers.<OrderEntity>lambdaUpdate().eq(OrderEntity::getLastMessageId, orderEntity.getLastMessageId()));
 
         lock.unlock();
     }
@@ -129,7 +131,7 @@ public class OrderController {
         orderEntity.setProductId(newOrderDto.getProductId());
         orderEntity.setUserId(newOrderDto.getUserId());
         orderEntity.setStatus("未支付");
-        orderEntityMapper.insert(orderEntity);
+        orderEntityService.save(orderEntity);
 
     }
 }

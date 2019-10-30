@@ -1,6 +1,0 @@
-BuildTime  2019-10-26 08:58:36
-GitVersion   
-MavenVersion 1.0-SNAPSHOT
-GitUrl https://github.com/neocxf/neocloud.git
-MyCatSite http://www.neospot.top
-QQGroup 351728469

@@ -231,7 +231,7 @@
                                     <value>https://github.com/neocxf/neocloud.git</value>
                                 </replacement>
                                 <replacement>
-                                    <token>@mycatsite@</token>
+                                    <token>@neocloudsite@</token>
                                     <value>http://www.neospot.top</value>
                                 </replacement>
                                 <replacement>
@@ -243,6 +243,22 @@
                     </execution>
                 </executions>
 
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <skip>false</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

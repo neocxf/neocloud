@@ -35,5 +35,5 @@ package-lock.json
 yarn.lock
 *.sqlite
 
-version.txt.template
+version.txt
 

@@ -21,11 +21,6 @@ java_opts="
 
 PROGRAM_NAME=messaging
 
-# cd ../$PROGRAM_NAME
-
-# mvn clean package -DskipTests
-
-# java -jar $java_opts target/${PROGRAM_NAME}.jar
 
 cd ..
 

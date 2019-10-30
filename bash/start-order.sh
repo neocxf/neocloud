@@ -21,12 +21,8 @@ java_opts="
 
 PROGRAM_NAME=order-service
 
-# cd ../$PROGRAM_NAME
-
-# mvn clean package -DskipTests
-
-# java -jar $java_opts target/${PROGRAM_NAME}.jar
 
 cd ..
 
-mvn --projects $PROGRAM_NAME  spring-boot:run -Dspring-boot.run.jvmArguments="-D$java_opts"
+#mvn --projects $PROGRAM_NAME  spring-boot:run -Dspring-boot.run.jvmArguments="-D$java_opts"
+mvn -pl $PROGRAM_NAME  -am spring-boot:run -Dspring-boot.run.jvmArguments="-D$java_opts"
