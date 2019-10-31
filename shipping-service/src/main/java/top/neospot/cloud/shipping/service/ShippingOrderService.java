@@ -53,7 +53,7 @@ public class ShippingOrderService implements InitializingBean, DisposableBean {
             return;
         }
 
-        persistShippingOrder = new ShippingOrder().setProductId(deductReward.getProductId()).setType((short) 1).setOrderId(deductReward.getOrderId()).setAddr("Shanghai Pudong").setNumber(deductReward.getNumber());
+        persistShippingOrder = new ShippingOrder().setType((short) 1).setOrderId(deductReward.getOrderId()).setAddr("Shanghai Pudong").setNumber(deductReward.getNumber());
 
         shippingOrderMapper.insert(persistShippingOrder);
 

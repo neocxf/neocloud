@@ -10,7 +10,9 @@ import java.util.Date;
 @Data
 @Accessors(chain = true)
 public abstract class UserBasedModel implements Serializable {
-	/**
+    protected Long userId;
+
+    /**
 	 * 创建时间
 	 */
 	@TableField(fill = FieldFill.INSERT)

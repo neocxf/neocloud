@@ -17,7 +17,6 @@ import top.neospot.cloud.common.model.BaseModel;
 public class ShippingOrder extends BaseModel {
     private Short type;
     private Long orderId;
-    private Long productId;
     private Long rewardExchangeId;
     private Long  number;
     private String addr;

@@ -26,7 +26,7 @@ public class RewardExchangeTest extends RewardAppTest {
         RewardExchange user = rewardMapper.selectOne(queryWrapper);
 
         if (user == null) {
-            user = new RewardExchange().setUserId(1L).setCredit(100L).setProductId(1L);
+            user = new RewardExchange().setUserId(1L).setCredit(100L);
             rewardMapper.insert(user);
         }
 

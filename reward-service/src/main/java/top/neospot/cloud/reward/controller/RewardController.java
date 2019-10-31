@@ -54,7 +54,6 @@ public class RewardController {
             RewardExchange exchange = new RewardExchange();
             exchange.setCredit(deductReward.getCredit());
             exchange.setUserId(deductReward.getUserId());
-            exchange.setProductId(deductReward.getProductId());
             exchange.setRewardId(reward.getId());
             exchange.setOrderId(deductReward.getOrderId());
 
@@ -64,6 +63,13 @@ public class RewardController {
         } else {
             throw new RuntimeException("insufficient reward balance");
         }
+    }
+
+    /**
+     * based on the history of reward exchange, rollback the reward to the given user's account
+     */
+    public void rollbackRewardExchange() {
+
     }
 
 }

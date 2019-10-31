@@ -1,8 +1,10 @@
 java_opts="
 -Xms256M
--Xmx512M
--XX:MetaspaceSize=128M
--XX:MaxMetaspaceSize=256M
+-Xmx256M
+-Xmn180M
+-XX:SurvivorRatio=5
+-XX:MetaspaceSize=100M
+-XX:MaxMetaspaceSize=100M
 -XX:+UseParNewGC
 -XX:+UseConcMarkSweepGC
 -XX:CMSInitiatingOccupancyFraction=92
@@ -15,15 +17,10 @@ java_opts="
 -XX:HeapDumpPath=.
 -XX:+PrintGCDetails
 -XX:+PrintGCTimeStamps 
--Xloggc:eureka-gc.log
 "
 
-PROGRAM_NAME=eureka-registry
+PROGRAM_NAME=gateway
 
-# cd ../$PROGRAM_NAME
+cd ..
 
-# mvn clean package -DskipTests
-
-# java -jar $java_opts target/${PROGRAM_NAME}.jar
-
-mvn -D$java_opts  --projects $PROGRAM_NAME spring-boot:run
+mvn --projects $PROGRAM_NAME  spring-boot:run -Dspring-boot.run.jvmArguments="-D$java_opts"

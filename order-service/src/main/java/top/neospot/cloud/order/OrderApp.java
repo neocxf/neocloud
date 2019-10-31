@@ -35,5 +35,4 @@ public class OrderApp extends BaseCloud {
                 .build();
     }
 
-
 }

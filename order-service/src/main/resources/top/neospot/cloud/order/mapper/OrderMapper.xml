@@ -10,6 +10,30 @@
         <collection property="items" ofType="top.neospot.cloud.order.entity.OrderItem" select="findOrderItemById" column="order_id"/>
     </resultMap>
 
+    <insert id="batchInsertOrderItems"  parameterType="java.util.List">
+        insert into order_item (user_id, order_item_id, order_id, product_id, product_name, num, cost_per_unit) values
+        <foreach collection="list" item="element" index="index" open="(" separator="),("  close=")">
+            #{element.userId},
+            #{element.orderItemId},
+            #{element.orderId},
+            #{element.productId},
+            #{element.productName},
+            #{element.num},
+            #{element.costPerUnit}
+        </foreach>
+    </insert>
+    <insert id="insertItem" parameterType="top.neospot.cloud.order.entity.OrderItem">
+        insert into order_item (user_id, order_item_id, order_id, product_id, product_name, num, cost_per_unit) values (
+                                                                                                                           #{userId},
+                                                                                                                           #{orderItemId},
+                                                                                                                           #{orderId},
+                                                                                                                           #{productId},
+                                                                                                                           #{productName},
+                                                                                                                           #{num},
+                                                                                                                           #{costPerUnit}
+                                                                                                                       );
+    </insert>
+
     <select id="findOrderById" resultMap="completeOrderMap">
         select * from order where order_id=#{id}
     </select>
@@ -17,4 +41,5 @@
     <select id="findOrderItemById" resultType="top.neospot.cloud.order.entity.OrderItem">
         select * from order_item where order_id=#{id};
     </select>
+
 </mapper>

@@ -3,8 +3,8 @@ java_opts="
 -Xmx400M
 -Xmn300M
 -XX:SurvivorRatio=6
--XX:MetaspaceSize=100M
--XX:MaxMetaspaceSize=100M
+-XX:MetaspaceSize=128M
+-XX:MaxMetaspaceSize=128M
 -XX:+UseParNewGC
 -XX:+UseConcMarkSweepGC
 -XX:CMSInitiatingOccupancyFraction=92

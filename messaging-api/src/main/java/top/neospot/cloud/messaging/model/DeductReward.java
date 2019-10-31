@@ -8,8 +8,6 @@ import lombok.Data;
  */
 @Data
 public class DeductReward {
-    private Long productId;
-
     private Long number;
 
     private Long userId;

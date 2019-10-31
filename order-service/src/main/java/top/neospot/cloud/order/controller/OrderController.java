@@ -7,6 +7,7 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import top.neospot.cloud.common.constants.ENV;
 import top.neospot.cloud.common.model.Message;
@@ -14,12 +15,15 @@ import top.neospot.cloud.common.util.UUIDUtil;
 import top.neospot.cloud.messaging.api.RpTransactionMessageService;
 import top.neospot.cloud.messaging.model.DeductReward;
 import top.neospot.cloud.order.dto.NewOrderDto;
-import top.neospot.cloud.order.entity.OrderEntity;
-import top.neospot.cloud.order.mapper.OrderEntityMapper;
+import top.neospot.cloud.order.entity.Order;
+import top.neospot.cloud.order.entity.OrderItem;
+import top.neospot.cloud.order.mapper.OrderMapper;
 import top.neospot.cloud.order.remote.RewardServiceClient;
-import top.neospot.cloud.order.service.OrderEntityService;
+import top.neospot.cloud.order.service.OrderService;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -27,7 +31,10 @@ import java.util.concurrent.TimeUnit;
 public class OrderController {
 
     @Autowired
-    OrderEntityService orderEntityService;
+    OrderService orderService;
+
+    @Autowired
+    OrderMapper orderMapper;
 
     @Autowired
     RewardServiceClient rewardServiceClient;
@@ -38,23 +45,22 @@ public class OrderController {
     @Reference
     private RpTransactionMessageService rpTransactionMessageService;
 
-    @GetMapping("/orders")
-    public List<OrderEntity> getAllOrders() {
-        System.out.println("hello orders get method");
-        return orderEntityService.list();
+    @GetMapping("/orders/{id}")
+    public Order fetchOneOrder(@PathVariable("id") Long orderId) {
+        return orderService.showOrder(orderId);
     }
 
     @PutMapping("/orders/{orderId}")
     public boolean confirmDelivery(@PathVariable("orderId") Long orderId){
         log.info("confirm the delivery of order: {}", orderId);
 
-        OrderEntity orderEntity = orderEntityService.getById(orderId);
+        Order orderEntity = orderService.getById(orderId);
         String messageId = orderEntity.getLastMessageId();
 
         rpTransactionMessageService.deleteMessageByMessageId(messageId);
 
         orderEntity.setStatus("已发货").setLastMessageId(null);
-        orderEntityService.updateById(orderEntity);
+        orderService.updateById(orderEntity);
 
         log.info("order[{}] has been shipped", orderId);
 
@@ -62,14 +68,17 @@ public class OrderController {
     }
 
     /**
+     *  when this action was triggered, it means that pre-check has already done, we should minus the reward point and do the delivery
      *   TODO: 重复支付的问题
      */
     @PostMapping("/orders/pay/{orderId}")
     public void payOrderByReward(@PathVariable(value = "orderId") Long orderId) throws Exception {
+        Order persistOrder = orderService.showOrder(orderId);
 
-        OrderEntity orderEntity = orderEntityService.getOne(Wrappers.<OrderEntity>lambdaQuery().eq(OrderEntity::getId, orderId).eq(OrderEntity::getStatus, "未支付"));
+        if (persistOrder == null || !Objects.equals(persistOrder.getStatus(), "支付成功")) {
+            return;
+        }
 
-        if (orderEntity == null) return;
 
         RLock lock = redissonClient.getLock("/order-pay-" + orderId);
 
@@ -78,11 +87,9 @@ public class OrderController {
         if (! successGainedLock) return;
 
         DeductReward deductReward = new DeductReward();
-        deductReward.setCredit((long) (orderEntity.getPrice() * orderEntity.getNumber()));
-        deductReward.setProductId(orderEntity.getProductId());
-        deductReward.setUserId(orderEntity.getUserId());
-        deductReward.setOrderId(orderEntity.getId());
-        deductReward.setNumber(orderEntity.getNumber());
+        deductReward.setCredit(persistOrder.totalCost().longValue());
+        deductReward.setUserId(persistOrder.getUserId());
+        deductReward.setOrderId(persistOrder.getOrderId());
 
         String deductRewardJson = JSONObject.toJSONString(deductReward);
 
@@ -95,8 +102,11 @@ public class OrderController {
         message.setConsumerQueue(ENV.REWARD_QUEUE);
         message.setMessageBody(deductRewardJson);
 
-        orderEntity.setLastMessageId(message.getMessageId());
-        orderEntityService.updateById(orderEntity);
+        persistOrder.setLastMessageId(message.getMessageId());
+        persistOrder.setField1(deductRewardJson);
+        persistOrder.setStatus("支付成功");
+
+        orderService.updateById(persistOrder);
 
         deductReward.setMessageId(message.getMessageId());
 
@@ -114,25 +124,42 @@ public class OrderController {
 
         // 检查扣分逻辑是否成功，若成功，则真实发送消息给shipping 端发货
 
-        orderEntity.setStatus("支付成功");
-        orderEntity.setField1(deductRewardJson);
+        persistOrder.setStatus("扣除积分成功");
 
         log.info("the order[{}] pay success, waiting for shipping", orderId);
-        orderEntityService.update(orderEntity, Wrappers.<OrderEntity>lambdaUpdate().eq(OrderEntity::getLastMessageId, orderEntity.getLastMessageId()));
+        orderService.update(persistOrder, Wrappers.<Order>lambdaUpdate().eq(Order::getLastMessageId, persistOrder.getLastMessageId()));
 
         lock.unlock();
     }
 
+    @Transactional
     @PostMapping("/orders")
     public void newOrder(@RequestBody NewOrderDto newOrderDto) {
-        OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setNumber(newOrderDto.getNumber());
-        orderEntity.setPrice(newOrderDto.getPrice());
-        orderEntity.setProductId(newOrderDto.getProductId());
-        orderEntity.setUserId(newOrderDto.getUserId());
-        orderEntity.setStatus("未支付");
-        orderEntityService.save(orderEntity);
+        Order order = new Order();
+        order.setUserId(newOrderDto.getUserId());
+        order.setAddressId(newOrderDto.getAddressId());
+        order.setStatus("未支付");
+
+        orderService.save(order);
+
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        for (NewOrderDto.OrderLine line : newOrderDto.getLines()) {
+            OrderItem item = new OrderItem();
+            item.setUserId(newOrderDto.getUserId());
+            item.setOrderId(order.getOrderId());
+            item.setProductName(line.getProductName());
+            item.setProductId(line.getProductId());
+            item.setCostPerUnit(Double.valueOf(line.getCostPerUnit()));
+            item.setNum(line.getNum());
+            orderItems.add(item);
+        }
+
+        orderService.batchInsertOrderLines(orderItems);
+
+
 
     }
+
 }
 

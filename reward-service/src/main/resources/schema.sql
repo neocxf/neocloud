@@ -16,9 +16,8 @@ create table if not exists reward (
 create table if not exists reward_exchange (
     id int primary key auto_increment,
     user_id int not null ,
-    product_id int not null ,
     reward_id int not null,
-    order_id int not null,
+    order_id bigint(32) not null,
     credit int not null,
     deleted bit(1) default 0,
     version int default 0,

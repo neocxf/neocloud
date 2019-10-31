@@ -26,7 +26,7 @@ public class ShippingOrderTest extends ShippingAppTest {
         ShippingOrder user = shippingMapper.selectOne(queryWrapper);
 
         if (user == null) {
-            user = new ShippingOrder().setRewardExchangeId(1L).setType((short) 1).setNumber(1L).setProductId(1L).setAddr("pudong");
+            user = new ShippingOrder().setRewardExchangeId(1L).setType((short) 1).setNumber(1L).setAddr("pudong");
             shippingMapper.insert(user);
         }
 
@@ -53,7 +53,7 @@ public class ShippingOrderTest extends ShippingAppTest {
     @Test
     public void testSelectOne() {
         QueryWrapper<ShippingOrder> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(ShippingOrder::getRewardExchangeId, 1)   ;
+        queryWrapper.lambda().eq(ShippingOrder::getRewardExchangeId, 1);
 
         ShippingOrder user = shippingMapper.selectOne(queryWrapper);
 

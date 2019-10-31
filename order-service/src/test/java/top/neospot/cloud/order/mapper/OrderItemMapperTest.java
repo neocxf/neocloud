@@ -2,6 +2,7 @@ package top.neospot.cloud.order.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import top.neospot.cloud.order.OrderAppTest;
@@ -12,6 +13,7 @@ import java.util.List;
 /**
  * By neo.chen{neocxf@gmail.com} on 2019/9/27.
  */
+@Ignore
 public class OrderItemMapperTest extends OrderAppTest {
 
     @Autowired
@@ -28,10 +30,8 @@ public class OrderItemMapperTest extends OrderAppTest {
 
         if (orderItems.size() == 0) {
             order = new OrderItem();
-            order.setStatus("未支付");
-            order.setStatus("item2");
-            order.setName("food");
-            order.setPrice(15.0);
+            order.setProductId(1L);
+            order.setCostPerUnit(15.0);
             order.setUserId(10L);
             order.setOrderId(385455987790163969L);
             orderItemMapper.insert(order);
@@ -53,11 +53,8 @@ public class OrderItemMapperTest extends OrderAppTest {
         System.out.println("---------------------------------------");
 
         order = new OrderItem();
-        order.setStatus("未支付");
-        order.setStatus("item2");
-        order.setName("food");
-        order.setPrice(15.0);
-        order.setUserId(10L);
+        order.setProductId(1L);
+        order.setCostPerUnit(15.0);
         order.setOrderId(385455987790163969L);
         orderItemMapper.insert(order);
     }
