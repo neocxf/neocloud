@@ -3,10 +3,8 @@ package top.neospot.cloud.cart;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
+import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -20,10 +18,8 @@ import top.neospot.cloud.common.BaseCloud;
 /**
  * By neo.chen{neocxf@gmail.com} on 2018/8/24.
  */
-@SpringBootApplication
-@EnableEurekaClient
+@SpringCloudApplication
 @EnableFeignClients
-@EnableCircuitBreaker
 @EnableSwagger2
 @Slf4j
 public class CartEndpoint extends BaseCloud {

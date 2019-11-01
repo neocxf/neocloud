@@ -2,6 +2,8 @@ package top.neospot.cloud.common;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.text.NumberFormat;
 
@@ -9,6 +11,7 @@ import java.text.NumberFormat;
  * By neo.chen{neocxf@gmail.com} on 2018/9/5.
  */
 @Slf4j
+@RestController
 public abstract class BaseCloud implements CommandLineRunner {
     @Override
     public void run(String... args) {
@@ -25,5 +28,10 @@ public abstract class BaseCloud implements CommandLineRunner {
         log.info("Max memory: " + format.format(maxMemory / mb) + mega);
         log.info("Total free memory: " + format.format((freeMemory + (maxMemory - allocatedMemory)) / mb) + mega);
         log.info(" =================================================================\n");
+    }
+
+    @RequestMapping("/")
+    public String health() {
+        return "UP";
     }
 }

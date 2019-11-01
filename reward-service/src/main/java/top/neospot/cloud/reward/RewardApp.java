@@ -6,7 +6,6 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -24,7 +23,6 @@ import java.util.Collections;
  */
 @MapperScan("top.neospot.cloud.reward.mapper")
 @SpringCloudApplication
-@EnableEurekaClient
 @EnableFeignClients
 @EnableSwagger2
 @Slf4j

@@ -13,6 +13,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseFactoryBean;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
+import top.neospot.cloud.common.intercept.SqlStatementInterceptor;
 
 import java.util.Date;
 
@@ -70,6 +71,18 @@ public class MybatisPlusConfig implements MetaObjectHandler {
     @Bean
     public OptimisticLockerInterceptor optimisticLockerInterceptor() {
         return new OptimisticLockerInterceptor();
+    }
+
+    /**
+     * 配置 sql打印拦截器
+     * application.yml中 febs.showsql: true 时生效
+     *
+     * @return SqlStatementInterceptor
+     */
+//    @Bean
+//    @ConditionalOnProperty(name = "febs.showsql", havingValue = "true")
+    SqlStatementInterceptor sqlStatementInterceptor() {
+        return new SqlStatementInterceptor();
     }
 
 }

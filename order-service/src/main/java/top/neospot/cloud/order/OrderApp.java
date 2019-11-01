@@ -3,7 +3,6 @@ package top.neospot.cloud.order;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -18,7 +17,6 @@ import top.neospot.cloud.common.BaseCloud;
  * By neo.chen{neocxf@gmail.com} on 2018/8/30.
  */
 @SpringCloudApplication
-@EnableEurekaClient
 @EnableFeignClients
 @EnableSwagger2
 @MapperScan("top.neospot.cloud.order.mapper")
