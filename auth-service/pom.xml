@@ -11,6 +11,10 @@
 
     <artifactId>auth-service</artifactId>
 
+    <properties>
+        <MAIN-CLASS>top.neospot.cloud.auth.AuthApp</MAIN-CLASS>
+    </properties>
+
     <dependencies>
 
         <dependency>
