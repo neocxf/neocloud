@@ -75,10 +75,9 @@ public class OrderController {
     public void payOrderByReward(@PathVariable(value = "orderId") Long orderId) throws Exception {
         Order persistOrder = orderService.showOrder(orderId);
 
-        if (persistOrder == null || !Objects.equals(persistOrder.getStatus(), "支付成功")) {
+        if (persistOrder != null && !Objects.equals(persistOrder.getStatus(), "未支付")) {
             return;
         }
-
 
         RLock lock = redissonClient.getLock("/order-pay-" + orderId);
 
@@ -98,7 +97,7 @@ public class OrderController {
         // 尝试扣除积分，将该逻辑发送到可靠消息部分
         Message message = new Message();
         message.setMessageId(UUIDUtil.messageId());
-        message.setMessageDateType("json");
+        message.setMessageDataType("json");
         message.setConsumerQueue(ENV.REWARD_QUEUE);
         message.setMessageBody(deductRewardJson);
 

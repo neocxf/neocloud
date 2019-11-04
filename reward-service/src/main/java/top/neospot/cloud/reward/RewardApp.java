@@ -5,6 +5,7 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +27,7 @@ import java.util.Collections;
 @EnableFeignClients
 @EnableSwagger2
 @Slf4j
-public class RewardApp implements CommandLineRunner {
+public class RewardApp extends SpringBootServletInitializer implements CommandLineRunner  {
 
     public static void main(String[] args) {
         SpringApplication.run(RewardApp.class, args);

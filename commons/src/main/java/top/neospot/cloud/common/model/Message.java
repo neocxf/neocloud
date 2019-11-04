@@ -21,7 +21,7 @@ public class Message extends BaseModel {
     private Date editTime = new Date();
     private String messageId;
     private String messageBody;
-    private String messageDateType;
+    private String messageDataType;
     private String consumerQueue;
     private Integer messageSendTimes;
     private Boolean alreadyDead;

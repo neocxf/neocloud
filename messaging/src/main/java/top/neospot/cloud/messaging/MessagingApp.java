@@ -2,6 +2,7 @@ package top.neospot.cloud.messaging;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -14,7 +15,7 @@ import top.neospot.cloud.common.BaseCloud;
 @SpringCloudApplication
 @EnableFeignClients
 @EnableSwagger2
-public class MessagingApp extends BaseCloud {
+public class MessagingApp extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         // Launch the application

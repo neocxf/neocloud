@@ -9,6 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <packaging>war</packaging>
+
     <artifactId>messaging</artifactId>
 
     <dependencies>
@@ -53,5 +55,6 @@
                 </executions>
             </plugin>
         </plugins>
+
     </build>
 </project>

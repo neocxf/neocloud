@@ -30,7 +30,7 @@ public class MessageMapperTest extends MessagingAppTest {
         stringMap.put("num", "2");
         stringMap.put("addr", "pudong");
         message.setMessageBody(JSON.toJSONString(stringMap));
-        message.setMessageDateType("json");
+        message.setMessageDataType("json");
         message.setAlreadyDead(false);
         message.setConsumerQueue("reward_shipping");
         message.setMessageSendTimes(0);

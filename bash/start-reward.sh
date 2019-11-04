@@ -2,7 +2,7 @@ java_opts="
 -Xms300M
 -Xmx300M
 -Xmn200M
--XX:SurvivorRatio=4
+-XX:SurvivorRatio=6
 -XX:MetaspaceSize=100M
 -XX:MaxMetaspaceSize=100M
 -XX:+UseParNewGC

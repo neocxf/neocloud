@@ -1,17 +1,17 @@
-
 # 发货申请表
 # 代表某个积分兑换产生的发货记录
-create table if not exists shipping_order (
-  id int primary key auto_increment,
-  type tinyint not null comment '0:购买, 1:积分兑换',
-  order_id bigint(32),
-  reward_exchange_id int,
-  number int not null default 1,
-  addr varchar(255) not null default '上海市',
-  shipped bit(1) default 0,
-  order_confirmed bit(1) default 0,
-  deleted bit(1) default 0,
-  version int default 0,
-  create_time datetime,
-  last_update_time datetime
+create table if not exists shipping_order
+(
+    id                 int primary key auto_increment,
+    type               tinyint      not null comment '0:购买, 1:积分兑换',
+    order_id           bigint(32),
+    reward_exchange_id int,
+    number             int          not null default 1,
+    addr               varchar(255) not null default '上海市',
+    shipped            bit(1)                default 0,
+    order_confirmed    bit(1)                default 0,
+    deleted            bit(1)                default 0,
+    version            int                   default 0,
+    create_time        datetime              default current_timestamp,
+    last_update_time   datetime              default current_timestamp on update current_timestamp
 );

@@ -49,11 +49,7 @@ public class RedisLimit {
 
         Object result = limitRequest(connection);
 
-        if (FAIL_CODE != (Long) result) {
-            return true;
-        } else {
-            return false;
-        }
+        return FAIL_CODE != (Long) result;
     }
 
     private Object limitRequest(Object connection) {

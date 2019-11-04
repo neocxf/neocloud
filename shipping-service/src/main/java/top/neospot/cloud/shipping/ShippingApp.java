@@ -2,6 +2,7 @@ package top.neospot.cloud.shipping;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -13,7 +14,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringCloudApplication
 @EnableFeignClients
 @EnableSwagger2
-public class ShippingApp {
+public class ShippingApp extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
         SpringApplication.run(ShippingApp.class, args);

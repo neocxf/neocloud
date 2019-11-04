@@ -61,7 +61,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         orderEntities.forEach(order -> {
             Message message = new Message();
             message.setMessageId(order.getLastMessageId());
-            message.setMessageDateType("json");
+            message.setMessageDataType("json");
             message.setConsumerQueue(ENV.REWARD_QUEUE);
             message.setMessageBody(order.getField1());
 
