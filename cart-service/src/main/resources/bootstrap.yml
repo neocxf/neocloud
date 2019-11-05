@@ -9,7 +9,7 @@ spring:
     refresh:
       refreshable: none
     config:
-      uri: http://${CONFIG_URI:localhost}:8888
+      uri: http://${CONFIG_HOST:localhost}:8888
   application:
     name: cart-service
 server:

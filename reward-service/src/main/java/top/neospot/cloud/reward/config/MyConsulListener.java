@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
+//@Configuration
 @ConditionalOnConsulEnabled
 @ConditionalOnMissingBean(type= "org.springframework.cloud.consul.discovery.ConsulLifecycle")
 @AutoConfigureAfter(ConsulAutoServiceRegistrationAutoConfiguration.class)

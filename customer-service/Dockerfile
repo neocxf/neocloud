@@ -2,16 +2,35 @@ FROM openjdk:8-jdk-alpine
 
 MAINTAINER Neo Chen <neocxf@gmail.com>
 
-ENV JAVA_OPTS="-Xss256k -Xmx60m -XX:MetaspaceSize=105m -XX:CompressedClassSpaceSize=25m -XX:ReservedCodeCacheSize=12m"
+ENV JAVA_OPTS=" -Xms300M \
+    -Xmx300M \
+    -Xmn200M \
+    -XX:SurvivorRatio=6 \
+    -XX:MetaspaceSize=125M \
+    -XX:MaxMetaspaceSize=125M \
+    -XX:+UseParNewGC \
+    -XX:+UseConcMarkSweepGC \
+    -XX:CMSInitiatingOccupancyFraction=92 \
+    -XX:+UseCMSCompactAtFullCollection \
+    -XX:CMSFullGCsBeforeCompaction=0 \
+    -XX:+CMSParallelInitialMarkEnabled \
+    -XX:+CMSScavengeBeforeRemark \
+    -XX:+DisableExplicitGC \
+    -XX:+HeapDumpOnOutOfMemoryError \
+    -XX:HeapDumpPath=/tmp \
+    -XX:+PrintGCDetails \
+    -XX:+PrintGCTimeStamps \
+    "
+ENV HOST="localhost"
 
-RUN apk add --update \
-    curl \
-    && rm -rf /var/cache/apk/*
+VOLUME /tmp
 
-ADD ./target/customer-service.jar /app.jar
+ARG JAR_FILE
 
-HEALTHCHECK --interval=30s --timeout=30s CMD curl -f http://localhost:9004/actuator/health || exit 1
+ADD target/${JAR_FILE} /app.jar
 
-ENTRYPOINT exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar /app.jar
+ENTRYPOINT exec java -Djava.security.egd=file:/dev/./urandom -jar -Dserver.port=80 /app.jar
 
-EXPOSE 9004
+HEALTHCHECK --interval=30s --timeout=30s CMD curl -f http://localhost:80/actuator/health || exit 1
+
+EXPOSE 80

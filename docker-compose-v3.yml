@@ -15,7 +15,7 @@ services:
     container_name: config
     mem_limit: 370
     ports:
-      - 8888:80
+      - 8888:8888
     environment:
       - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
   eureka:
@@ -23,7 +23,7 @@ services:
     container_name: eureka
     mem_limit: 320
     ports:
-      - 8761:80
+      - 8761:8761
     environment:
       - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
     depends_on:
@@ -33,7 +33,7 @@ services:
     container_name: util
     mem_limit: 370
     ports:
-      - 9003:80
+      - 9003:9003
     environment:
       - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
       - SPRING_RABBITMQ_HOST=${NEOCLOUD_HOST}
@@ -42,7 +42,7 @@ services:
     container_name: inventory
     mem_limit: 320
     ports:
-      - 9001:80
+      - 9001:9001
     environment:
       - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
   gateway:
@@ -50,7 +50,7 @@ services:
     container_name: gateway
     mem_limit: 320
     ports:
-      - 8080:80
+      - 8080:8080
     environment:
       - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
   cart:
@@ -58,16 +58,23 @@ services:
     container_name: cart
     mem_limit: 370
     ports:
-      - 9002:80
+      - 9002:9002
     environment:
       - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
       - SPRING_RABBITMQ_HOST=${NEOCLOUD_HOST}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      inventory:
+        condition: service_healthy
+      util:
+        condition: service_healthy
   catalog:
     build: catalog-service
     container_name: catalog
     mem_limit: 370
     ports:
-      - 9005:80
+      - 9005:9005
     environment:
       - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
   customer:
@@ -75,7 +82,7 @@ services:
     container_name: customer
     mem_limit: 370
     ports:
-      - 9004:80
+      - 9004:9004
     environment:
       - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
   order:
@@ -83,7 +90,7 @@ services:
     container_name: order
     mem_limit: 370
     ports:
-    - 9006:80
+    - 9006:9006
     environment:
     - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
   mongo:
@@ -97,7 +104,7 @@ services:
     container_name: auth
     mem_limit: 370
     ports:
-    - 9007:80
+    - 9007:9007
     environment:
     - EUREKA_INSTANCE_HOSTNAME=${NEOCLOUD_HOST}
     - MONGODB_HOST=${NEOCLOUD_HOST}

@@ -2,6 +2,7 @@ package top.neospot.cloud.catalog;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -16,7 +17,7 @@ import top.neospot.cloud.common.BaseCloud;
 /**
  * By neo.chen{neocxf@gmail.com} on 2018/8/30.
  */
-@SpringBootApplication
+@SpringCloudApplication
 @EnableSwagger2
 @EnableCircuitBreaker
 @EnableFeignClients
