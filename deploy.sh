@@ -15,6 +15,12 @@ auth-service|cart-service|catalog-service|inventory-service|messaging|order-serv
 
     cd /home/neo/pub/
 
+    PID=$(ps -ef | grep java | grep $1 | awk '{print $2}')
+
+    if [ -n "$PID" ]; then
+      kill -9 $PID
+    fi
+
     echo "nohup java $JAVA_OPTS -jar  -DHOST=$HOST -DZK_HOST=$ZK_HOST -DREDIS_HOST=$REDIS_HOST -DMY_HOST=$MY_HOST -DMQ_HOST=$MQ_HOST $1.jar >> $1.log &" > $1.sh
 
     chmod u+x $1.sh

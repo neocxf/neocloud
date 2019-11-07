@@ -28,6 +28,7 @@
         <module>shipping-service</module>
         <module>messaging-api</module>
         <module>xa-client</module>
+        <module>rocket</module>
     </modules>
 
     <packaging>pom</packaging>
