@@ -45,7 +45,7 @@
         <spring-cloud.version>Finchley.RELEASE</spring-cloud.version>
         <mybatis.version>3.5.1</mybatis.version>
         <mybatis-spring.version>2.0.1</mybatis-spring.version>
-        <h2.version>1.4.190</h2.version>
+        <h2.version>2.0.206</h2.version>
         <swagger.version>2.9.2</swagger.version>
         <dubbo.version>2.7.3</dubbo.version>
         <shardingsphere.version>4.0.0-RC1</shardingsphere.version>
